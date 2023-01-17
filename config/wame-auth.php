@@ -9,7 +9,7 @@ return [
 
     // Login Options
     'login' => [
-        'require_email_verified' => false
+        'require_email_verified' => true
     ],
 
     // Register Options

@@ -9,21 +9,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class UserRegisteredMail extends Mailable
+class UserPasswordResetCodeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /** @var User  */
     protected User $user;
 
+    /** @var string  */
+    protected string $code;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $user, string $code)
     {
         $this->user = $user;
+        $this->code = $code;
     }
 
     /**
@@ -34,7 +38,7 @@ class UserRegisteredMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: __('Verify your email address')
+            subject: __('Password reset code!')
         );
     }
 
@@ -45,10 +49,9 @@ class UserRegisteredMail extends Mailable
      */
     public function content()
     {
-        $url = $this->user->getEmailVerificationLink();
         return new Content(
-            markdown: 'wame-auth::emails.users.registered',
-            with: ['url' => $url]
+            markdown: 'wame-auth::emails.users.passwordResetCode',
+            with: ['code' => $this->code]
         );
     }
 

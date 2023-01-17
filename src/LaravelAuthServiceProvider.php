@@ -71,12 +71,18 @@ class LaravelAuthServiceProvider extends ServiceProvider
         if (file_exists(database_path('/migrations/2014_10_12_000000_create_users_table.php'))) {
             unlink(database_path('/migrations/2014_10_12_000000_create_users_table.php'));
         }
+        if (file_exists(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'))) {
+            unlink(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'));
+        }
 
         $migrations = [];
 
         // If user migrations are not published already
         if (!file_exists(database_path('/migrations/2023_01_17_094244_change_oauth_passport_column_types.php'))) {
             $migrations[ __DIR__ . '/../database/migrations/change_oauth_column_types.php.stub'] = database_path('migrations/2023_01_17_094244_change_oauth_passport_column_types.php');
+        }
+        if (!file_exists(database_path('/migrations/2023_01_17_135603_create_user_password_resets_table.php'))) {
+            $migrations[ __DIR__ . '/../database/migrations/create_user_password_resets_table.php.stub'] = database_path('migrations/2023_01_17_135603_create_user_password_resets_table.php');
         }
 
         $this->publishes($migrations, 'migrations');

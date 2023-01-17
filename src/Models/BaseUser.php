@@ -63,6 +63,14 @@ class BaseUser extends Authenticatable implements Sortable
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function passwordResets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserPasswordReset::class, 'user_id');
+    }
+
+    /**
      * @return string
      */
     public function getEmailVerificationLink(): string

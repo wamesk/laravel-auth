@@ -11,11 +11,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
+use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Resources\V1\BaseUserResource;
 use Wame\LaravelAuth\Notifications\UserRegisteredNotification;
 
 class LaravelAuthController extends Controller
 {
+    use HasPasswordReset;
 
     /** @var string  */
     protected string $codePrefix = 'auth';
@@ -48,10 +50,8 @@ class LaravelAuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (config('wame-auth.login.require_email_verified')) {
-            if (!$user->email_verified_at) {
-                return ApiResponse::code('1.1.2', $this->codePrefix)->response(403);
-            }
+        if (config('wame-auth.login.require_email_verified') && !$user->hasVerifiedEmail()) {
+            return ApiResponse::code('1.1.2', $this->codePrefix)->response(403);
         }
 
         $data['user'] = new BaseUserResource($user);

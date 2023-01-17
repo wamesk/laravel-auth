@@ -4,20 +4,23 @@ namespace Wame\LaravelAuth\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Wame\LaravelAuth\Mail\UserRegisteredMail;
+use Wame\LaravelAuth\Mail\UserPasswordResetCodeMail;
 
-class UserRegisteredNotification extends Notification
+class PasswordResetCodeNotification extends Notification
 {
     use Queueable;
+
+    /** @var string  */
+    protected string $code;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(string $code)
     {
-        //
+        $this->code = $code;
     }
 
     /**
@@ -32,12 +35,14 @@ class UserRegisteredNotification extends Notification
     }
 
     /**
+     * Get the mail representation of the notification.
+     *
      * @param $notifiable
-     * @return UserRegisteredMail
+     * @return UserPasswordResetCodeMail
      */
-    public function toMail($notifiable): UserRegisteredMail
+    public function toMail($notifiable): UserPasswordResetCodeMail
     {
-        return (new UserRegisteredMail($notifiable))->to($notifiable);
+        return (new UserPasswordResetCodeMail($notifiable, $this->code))->to($notifiable);
     }
 
     /**
@@ -51,17 +56,5 @@ class UserRegisteredNotification extends Notification
         return [
             //
         ];
-    }
-
-    /**
-     * Determine if the notification should be sent.
-     *
-     * @param $notifiable
-     * @param $channel
-     * @return bool
-     */
-    public function shouldSend($notifiable, $channel): bool
-    {
-        return !$notifiable->hasVerifiedEmail();
     }
 }
