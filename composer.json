@@ -1,0 +1,31 @@
+{
+    "name": "wamesk/laravel-auth",
+    "description": "OAuth2 extension for authentication with login, registration, password recovery, email verification, API extension, user settings and logging of device history.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "WAME s. r. o.",
+            "email": "info@wame.sk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Wame\\LaravelAuth\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wame\\LaravelAuth\\LaravelAuthServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "laravel/passport": "^v11.5.0",
+        "spatie/eloquent-sortable": "^4.0.1",
+        "spatie/laravel-activitylog": "^4.7.2",
+        "wamesk/laravel-api-response": "^1.0.1"
+    }
+}
