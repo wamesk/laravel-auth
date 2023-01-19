@@ -19,4 +19,9 @@ return [
     '4.1.1' => 'Email verification is disabled.',
     '4.1.2' => 'Verification link was sent to email.',
     '4.1.3' => 'Email is already verified.',
+
+    // Password reset
+    '5.1.1' => 'Password reset link has been sent.',
+    '5.1.2' => 'Password has been changed successfully.',
+    '5.1.3' => 'Password reset code is incorrect. Request a new code.',
 ];

@@ -86,6 +86,19 @@ Run migrations
 php artisan migrate
 ```
 
+## Setup OAuth2
+```bash
+php artisan passport:install
+```
+Set passport output in `.env` file:
+```bash
+PASSPORT_PERSONAL_ACCESS_CLIENT_ID=<"OUTPUT-GRANT-CLIENT-ID">
+PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=<"OUTPUT-GRANT-CLIENT-SECRET">
+```
+
+
+
+
 # Configuration
 This is the content of the file that will be published in `config/wame-auth.php`
 

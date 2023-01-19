@@ -26,7 +26,7 @@ trait HasPasswordReset
         ]);
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:users,email|max:255'
+            'email' => 'required|email|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -37,19 +37,20 @@ trait HasPasswordReset
 
         $user = User::where('email', $email)->first();
 
-        $code = random_int(100000, 999999);
-
-        $userPasswordReset = UserPasswordReset::create([
-            'user_id' => $user->id,
-            'reset_method' => 1,
-            'value' => sha1($code),
-            'expired_at' => Carbon::now()->addMinutes(10)
-        ]);
-
-        if ($userPasswordReset) {
-            $user->notify(new PasswordResetCodeNotification($code));
-            return ApiResponse::code('1.1.1', $this->codePrefix)->response();
+        if ($user) {
+            $code = random_int(100000, 999999);
+            $userPasswordReset = UserPasswordReset::create([
+                'user_id' => $user->id,
+                'reset_method' => 1,
+                'value' => sha1($code),
+                'expired_at' => Carbon::now()->addMinutes(10)
+            ]);
+            if ($userPasswordReset) {
+                $user->notify(new PasswordResetCodeNotification($code));
+            }
         }
+
+        return ApiResponse::code('5.1.1', $this->codePrefix)->response();
     }
 
     /**
@@ -81,14 +82,13 @@ trait HasPasswordReset
         ])->first();
 
         if (!$userPasswordReset) {
-            return ApiResponse::code('1.1.1', $this->codePrefix)
+            return ApiResponse::code('5.1.3', $this->codePrefix)
                 ->response(403);
         }
 
         $user->update(['password' => Hash::make($request->new_password)]);
         $userPasswordReset->delete();
 
-        return ApiResponse::code('1.1.1', $this->codePrefix)
-            ->response(200);
+        return ApiResponse::code('5.1.2', $this->codePrefix)->response();
     }
 }
