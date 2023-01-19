@@ -1,6 +1,6 @@
 {
     "name": "wamesk/laravel-auth",
-    "description": "OAuth2 extension for authentication with login, registration, password recovery, email verification, API extension, user settings and logging of device history.",
+    "description": "OAuth2 authorization with API endpoints. Also includes registration process, login, password reset, email validation.",
     "type": "library",
     "license": "MIT",
     "authors": [

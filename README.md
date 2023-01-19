@@ -1,6 +1,8 @@
 # Laravel Auth
 
-User management package with API outputs by 
+OAuth2 authorization with API endpoints.
+
+Also includes registration process, login, password reset, email validation.
 
 # Setup
 
