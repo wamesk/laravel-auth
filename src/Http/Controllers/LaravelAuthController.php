@@ -3,10 +3,8 @@
 namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogin;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;

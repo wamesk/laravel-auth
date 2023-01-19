@@ -6,11 +6,13 @@ use App\Models\User;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Http\Resources\V1\BaseUserResource;
-use Wame\LaravelAuth\Notifications\UserRegisteredNotification;
+use Wame\LaravelAuth\Notifications\UserEmailVerificationByLinkNotification;
 
 trait HasRegistration
 {
@@ -45,7 +47,19 @@ trait HasRegistration
 
         // If email verification is enabled
         if (config('wame-auth.register.email_verification')) {
-            $user->notify(new UserRegisteredNotification());
+            $verificationLink =
+                URL::temporarySignedRoute(
+                    'auth.verify',
+                    Carbon::now()->addMinutes(
+                        config('wame-auth.email_verification.verification_link_expires_after', 120)
+                    ),
+                    [
+                        'id' => $user->id,
+                        'hash' => sha1($user->email)
+                    ]
+                );
+
+            $user->notify(new UserEmailVerificationByLinkNotification($verificationLink));
         }
 
         // Try to authenticate user with OAuth2
