@@ -8,7 +8,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
-use Wame\LaravelAuth\Mail\UserPasswordResetCodeMail;
 use Wame\LaravelAuth\Models\UserPasswordReset;
 use Wame\LaravelAuth\Notifications\PasswordResetCodeNotification;
 
@@ -63,7 +62,7 @@ trait HasPasswordReset
             'email' => 'required|email|exists:users,email|max:255',
             'reset_method' => 'required|integer|in:1,2',
             'value' => 'required',
-            'new_password' => config('wame-auth.register.password.rules'),
+            'new_password' => config('wame-auth.register.password_rules'),
         ]);
 
         if ($validator->fails()) {
@@ -86,7 +85,7 @@ trait HasPasswordReset
                 ->response(403);
         }
 
-        $user->update(['password' => $request->new_password]);
+        $user->update(['password' => Hash::make($request->new_password)]);
         $userPasswordReset->delete();
 
         return ApiResponse::code('1.1.1', $this->codePrefix)

@@ -4,6 +4,7 @@ namespace Wame\LaravelAuth;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Wame\LaravelAuth\Console\InstallLaravelAuth;
 
 class LaravelAuthServiceProvider extends ServiceProvider
 {
@@ -12,7 +13,7 @@ class LaravelAuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/wame-auth.php', 'wame-auth');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'wame-auth');
@@ -23,9 +24,10 @@ class LaravelAuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->runningInConsole()) {
+
             // Export the migration
             $this->publishMigrations();
 
@@ -34,9 +36,18 @@ class LaravelAuthServiceProvider extends ServiceProvider
 
             // Export views
             $this->publishViews();
+
+            // Export translations
+            $this->publishTranslations();
+
+            // Register Commands
+            $this->commands([
+                InstallLaravelAuth::class,
+            ]);
         }
 
         $this->registerRoutes();
+        $this->registerTranslations();
     }
 
     /**
@@ -47,8 +58,15 @@ class LaravelAuthServiceProvider extends ServiceProvider
         Route::group($this->routeConfiguration(), function () {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         });
-
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+    }
+
+    /**
+     * @return void
+     */
+    protected function registerTranslations(): void
+    {
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'wame-auth');
     }
 
     /**
@@ -57,7 +75,7 @@ class LaravelAuthServiceProvider extends ServiceProvider
     protected function routeConfiguration(): array
     {
         return [
-            'prefix' => 'api/v1'
+            'prefix' => config('wame-auth.route.prefix', 'api/v1')
         ];
     }
 
@@ -106,6 +124,15 @@ class LaravelAuthServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../resources/views' => resource_path('views/vendor/wame-auth'),
         ], 'views');
+    }
 
+    /**
+     * @return void
+     */
+    private function publishTranslations(): void
+    {
+        $this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/laravel-auth'),
+        ], 'translations');
     }
 }

@@ -4,32 +4,64 @@ use Illuminate\Validation\Rules\Password;
 
 return [
 
-    // OAuth 2
-    'login_endpoint' => '/oauth/token',
+    // User Model
+    'model' => \Wame\LaravelAuth\Models\BaseUser::class,
 
-    // Login Options
+    /* Login Options */
     'login' => [
-        'require_email_verified' => true
+
+        // Determine if login should be possible.
+        'enabled' => true,
+
+        // Enable this if only verified users can log in.
+        'only_verified' => false,
+
+        // Additional parameters to login request
+        'additional_body_params' => [
+            // Example: 'app_version' => 'required|string|min:1'
+        ]
     ],
 
-    // Register Options
+    /* Register Options */
     'register' => [
 
-        /* Send verification mail after registration */
-        'send_verification_mail' => true,
+        // Determine if registration should be possible.
+        'enabled' => true,
 
-        /* Rules for password */
-        'password' => [
-            'rules' => [
-                'required',
-                'string',
-                Password::min(8)
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised(),
-                'confirmed'
-            ]
+        // Enable this if verification link should be sent after successful registration.
+        'email_verification' => true,
+
+        // Determine rules for password
+        'password_rules' => [
+            'required',
+            'string',
+            Password::min(8)
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+                ->uncompromised(),
+            'confirmed'
+        ],
+
+        // Additional parameters to register request
+        'additional_body_params' => [
+            // Example: 'app_version' => 'required|string|min:1'
         ]
+    ],
+
+    /* Email verification Options */
+    'email_verification' => [
+
+        // Determine if email verification should be enabled.
+        'enabled' => true,
+
+        // The number of minutes the verification link is valid
+        'verification_link_expires_after' => 120
+
+    ],
+
+    /* Routing Options */
+    'route' => [
+        'prefix' => 'api/v1'
     ]
 ];

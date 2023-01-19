@@ -56,6 +56,14 @@ class BaseUser extends Authenticatable implements Sortable
         'deleted_at' => 'datetime'
     ];
 
+    /**
+     * @var array
+     */
+    public array $sortable = [
+        'order_column_name' => 'sort_order',
+        'sort_when_creating' => true,
+    ];
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -68,18 +76,5 @@ class BaseUser extends Authenticatable implements Sortable
     public function passwordResets(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(UserPasswordReset::class, 'user_id');
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmailVerificationLink(): string
-    {
-        return URL::temporarySignedRoute('auth.email.verify', Carbon::now()->addMinutes(120),
-            [
-                'id' => $this->id,
-                'hash' => sha1($this->email),
-            ]
-        );
     }
 }
