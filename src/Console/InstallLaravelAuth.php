@@ -19,7 +19,7 @@ class InstallLaravelAuth extends Command
      *
      * @var string
      */
-    protected $description = 'Install Laravel Auth by WAME';
+    protected $description = 'Install Laravel Auth';
 
     /**
      * Execute the console command.
@@ -28,10 +28,11 @@ class InstallLaravelAuth extends Command
      */
     public function handle()
     {
-        Artisan::call('vendor:publish --tag=passport-config');
-        Artisan::call('vendor:publish --tag=eloquent-sortable-config');
-        Artisan::call('vendor:publish --provider="Wame\LaravelAuth\LaravelAuthServiceProvider" --tag="migrations"');
-        Artisan::call('vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"');
+        Artisan::call('vendor:publish', ['--tag' => 'passport-config'],);
+        Artisan::call('vendor:publish', ['--tag' => 'eloquent-sortable-config']);
+        Artisan::call('vendor:publish', ['--provider' => 'Wame\LaravelAuth\LaravelAuthServiceProvider', '--tag' => 'eloquent-sortable-config',]);
+        Artisan::call('vendor:publish', ['--provider' => 'Wame\LaravelAuth\LaravelAuthServiceProvider', '--tag' => 'migrations',]);
+        Artisan::call('vendor:publish', ['--provider' => 'Spatie\Activitylog\ActivitylogServiceProvider', '--tag' => 'activitylog-migrations',]);
 
         return Command::SUCCESS;
     }
