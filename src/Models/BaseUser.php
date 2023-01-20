@@ -2,13 +2,10 @@
 
 namespace Wame\LaravelAuth\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\URL;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -17,7 +14,7 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class BaseUser extends Authenticatable implements Sortable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasUlids, SortableTrait, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, SortableTrait, LogsActivity;
 
     /**
      * The attributes that are mass assignable.

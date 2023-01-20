@@ -32,10 +32,12 @@ Change `extends` method in `app/Models/User.php` to `Wame\LaravelAuth\Models\Bas
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Wame\LaravelAuth\Models\BaseUser;
 
 class User extends BaseUser
 {
+    use HasUlids;
 
 }
 ```
