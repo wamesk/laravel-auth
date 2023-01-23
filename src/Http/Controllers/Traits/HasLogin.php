@@ -8,7 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
-use Wame\LaravelAuth\Http\Resources\V1\BaseUserResource;
+use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 
 trait HasLogin
 {

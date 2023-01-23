@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
-use Wame\LaravelAuth\Http\Resources\V1\BaseUserResource;
+use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 use Wame\LaravelAuth\Notifications\UserEmailVerificationByLinkNotification;
 
 trait HasRegistration

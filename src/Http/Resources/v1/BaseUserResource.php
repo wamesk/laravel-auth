@@ -1,6 +1,6 @@
 <?php
 
-namespace Wame\LaravelAuth\Http\Resources\V1;
+namespace Wame\LaravelAuth\Http\Resources\v1;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
