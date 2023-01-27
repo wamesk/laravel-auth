@@ -43,15 +43,15 @@ class LaravelAuthController extends Controller
 
             return json_decode($response->getBody()->getContents(), true);
         } catch (\Exception $exception) {
-
+            dd($exception->getMessage());
         }
     }
 
     /**
-     * @param array $passportResponse
+     * @param array|null $passportResponse
      * @return array|void
      */
-    private function checkIfPassportHasError(array $passportResponse) {
+    private function checkIfPassportHasError(array|null $passportResponse) {
         // If OAuth2 has errors
         if (isset($passportResponse['error'])) {
             // If email or password is invalid
@@ -62,6 +62,8 @@ class LaravelAuthController extends Controller
             if (in_array($passportResponse['error'], ['invalid_secret', 'invalid_client'])) {
                 return [['1.1.2', $this->codePrefix], 403];
             }
+
+            dd($passportResponse);
         } else {
             return [];
         }
