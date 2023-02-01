@@ -29,11 +29,14 @@ trait HasRegistration
         }
 
         // Validate request data
-        $validator = Validator::make($request->all(), [
+        $dataToValidate = [
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users,email|max:255',
             'password' => config('wame-auth.register.password_rules')
-        ]);
+        ];
+        
+        // Validate request data
+        $validator = Validator::make($request->all(), array_merge($dataToValidate, config('wame-auth.register.additional_body_params', [])));
 
         if ($validator->fails()) {
             return ApiResponse::errors($validator->messages()->toArray())
