@@ -11,12 +11,13 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::clas
 
         if (config('wame-auth.login.enabled')) {
             Route::post('/login', 'login')->name('login');
+            Route::middleware('auth:api')->post('/logout', 'logout')->name('password.reset');
         }
 
         if (config('wame-auth.email_verification.enabled')) {
-            Route::get('/email/verify/{email}', 'sendVerificationLink')->name('verify.link');
+            Route::post('/email/send_verification_link', 'sendVerificationLink')->name('verify.send_verification_link');
         }
 
-        Route::get('/password/reset/code/{email}', 'sendPasswordResetCode')->name('password.reset.code');
+        Route::post('/password/reset/send', 'sendPasswordReset')->name('password.reset.send');
         Route::post('/password/reset', 'validatePasswordReset')->name('password.reset');
     });

@@ -7,16 +7,19 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogin;
+use Wame\LaravelAuth\Http\Controllers\Traits\HasLogout;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasRegistration;
 
+/**
+ * @group OAuth2 User Management
+ */
 class LaravelAuthController extends Controller
 {
-    use HasLogin, HasRegistration, HasPasswordReset, HasEmailVerification;
+    use HasLogin, HasRegistration, HasPasswordReset, HasEmailVerification, HasLogout;
 
     /** @var string  */
     protected string $codePrefix = 'wame-auth::auth';
-
 
     /**
      * @param string $email

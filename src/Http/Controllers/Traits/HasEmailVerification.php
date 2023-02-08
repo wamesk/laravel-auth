@@ -14,23 +14,41 @@ trait HasEmailVerification
 {
 
     /**
+     * User Send Email Verify Link
+     *
+     * Send link to verify account on user email.
+     *
+     * @response 200 scenario="success" {
+        "data": null,
+        "code": "4.1.2",
+        "errors": null,
+        "message": "Verification link was sent to email."
+     }
+     * @response status=400 scenario="bad request" {
+        "data": null,
+        "code": "1.1.1",
+        "errors": {
+            "email": ["The email field is required."]
+        },
+        "message": "An error occurred while validating the form."
+    }
      * @param Request $request
-     * @param string $email
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendVerificationLink(Request $request, string $email): \Illuminate\Http\JsonResponse
+    public function sendVerificationLink(Request $request): \Illuminate\Http\JsonResponse
     {
         // Validate request data
-        $validator = Validator::make($request->merge(['email' => $email])->all(), [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:255'
         ]);
+
         if ($validator->fails()) {
             return ApiResponse::errors($validator->messages()->toArray())
                 ->code('1.1.1', $this->codePrefix)
                 ->response(400);
         }
 
-        $user = User::where(['email' => $email])->first();
+        $user = User::where(['email' => $request->email])->first();
 
         if ($user) {
             if ($user->hasVerifiedEmail()) {

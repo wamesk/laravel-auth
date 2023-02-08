@@ -11,9 +11,11 @@ return [
     '2.1.3' => 'Login was successful.',
     '2.1.4' => 'The user with this email is already in the system, but his account has been deleted.',
     '2.1.5' => 'Login is disabled.',
+    '2.1.6' => 'User was logged out.',
 
     // Register
     '3.1.1' => 'Registration is disabled.',
+    '3.1.2' => 'User has been registered.',
 
     // Email verificaton
     '4.1.1' => 'Email verification is disabled.',
@@ -21,7 +23,10 @@ return [
     '4.1.3' => 'Email is already verified.',
 
     // Password reset
-    '5.1.1' => 'Password reset link has been sent.',
+    '5.1.1' => 'Password reset code has been sent.',
     '5.1.2' => 'Password has been changed successfully.',
     '5.1.3' => 'Password reset code is incorrect. Request a new code.',
+    '5.1.4' => 'Password reset link has been sent.',
+    '5.1.5' => 'Password reset link is incorrect. Request a new link.',
+    '5.1.6' => 'Password reset nova link has been sent.'
 ];

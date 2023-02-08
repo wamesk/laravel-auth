@@ -89,8 +89,10 @@ class LaravelAuthServiceProvider extends ServiceProvider
         if (file_exists(database_path('/migrations/2014_10_12_000000_create_users_table.php'))) {
             unlink(database_path('/migrations/2014_10_12_000000_create_users_table.php'));
         }
+
+        // Default password reset table
         if (file_exists(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'))) {
-            unlink(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'));
+            //unlink(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'));
         }
 
         $migrations = [];
