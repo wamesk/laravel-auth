@@ -1,0 +1,22 @@
+{
+    "name": "wamesk/laravel-api-response",
+    "description": "Laravel api response helper.",
+    "keywords": [
+        "helper",
+        "laravel",
+        "api",
+        "response"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.0|^8.1|^8.2",
+        "laravel/framework": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wame\\ApiResponse\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

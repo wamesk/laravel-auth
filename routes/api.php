@@ -11,7 +11,7 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::clas
 
         if (config('wame-auth.login.enabled')) {
             Route::post('/login', 'login')->name('login');
-            Route::middleware('auth:api')->post('/logout', 'logout')->name('password.reset');
+            Route::middleware('auth:api')->post('/logout', 'logout')->name('logout');
         }
 
         if (config('wame-auth.email_verification.enabled')) {
