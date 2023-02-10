@@ -51,7 +51,7 @@ class UserPasswordResetNovaMail extends Mailable
     {
         return new Content(
             markdown: 'wame-auth::emails.users.passwordResetNova',
-            with: ['url' => route('nova.pages.password.reset', $this->token)]
+            with: ['url' => route('nova.pages.password.reset', $this->token) . '?email=' . $this->user->email]
         );
     }
 
