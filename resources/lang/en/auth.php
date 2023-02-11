@@ -17,7 +17,7 @@ return [
     '3.1.1' => 'Registration is disabled.',
     '3.1.2' => 'User has been registered.',
 
-    // Email verificaton
+    // Email verification
     '4.1.1' => 'Email verification is disabled.',
     '4.1.2' => 'Verification link was sent to email.',
     '4.1.3' => 'Email is already verified.',
