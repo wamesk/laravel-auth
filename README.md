@@ -185,3 +185,75 @@ php artisan vendor:publish --provider="Wame\LaravelAuth\LaravelAuthServiceProvid
 ```bash
 php artisan vendor:publish --provider="Wame\LaravelAuth\LaravelAuthServiceProvider" --tag="translations"
 ```
+
+# Modifications / Extensions
+### Edit/Add functions and documentation
+
+- create controller `AuthController.php` by following the example on the documentation below
+ ``` 
+class AuthController extends LaravelAuthController 
+```
+
+- Copy from vendor/wamesk/laravel-auth/routes/api.php to `routes/api.php`
+```bash
+Route::controller(\App\Http\Controllers\v1\AuthController::class)->prefix('v1')->name('auth.')
+    ->group(function () {
+
+        if (config('wame-auth.register.enabled')) {
+            Route::post('/register', 'register')->name('register');
+        }
+
+        if (config('wame-auth.login.enabled')) {
+            Route::post('/login', 'login')->name('login');
+            Route::middleware('auth:api')->post('/logout', 'logout')->name('logout');
+        }
+
+        if (config('wame-auth.email_verification.enabled')) {
+            Route::post('/email/send_verification_link', 'sendVerificationLink')->name('verify.send_verification_link');
+        }
+
+        Route::post('/password/reset/send', 'sendPasswordReset')->name('password.reset.send');
+        Route::post('/password/reset', 'validatePasswordReset')->name('password.reset');
+    });
+```
+
+
+Add documentation to function Example:
+`app/Http/Controllers/v1/AuthController.php`
+```
+class AuthController extends LaravelAuthController
+{
+    /*
+    Here will be the documentation for register
+    */
+    
+    public function register(Request $request): JsonResponse
+    {
+        return parent::register($request);
+    }
+```
+
+Add data to login response / Edit function   Example:
+`app/Http/Controllers/v1/AuthController.php`
+```
+    public function login(Request $request): JsonResponse
+    {
+        $return = parent::login($request);
+        $data = $return->getData();
+
+        $personal_number = User::whereId($data->data->user->id)->first()->personal_number;
+        $data->data->user->personal_number = $personal_number;
+        $return->setData($data);
+
+        return $return;
+    }
+```
+Example how you can add parameters to registration by using Observer:
+```
+public function handle(UserCreatingEvent $event)
+    {
+        $user = $event->entity;
+        
+        $user->team_id = request()->team_id;
+        $user->approve ?: $user->approve = 0;
+    }
