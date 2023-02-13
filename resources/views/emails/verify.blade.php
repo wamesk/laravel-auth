@@ -28,11 +28,11 @@
 
 <body class="antialiased">
     @if($user->hasVerifiedEmail())
-        <h1>Success!</h1>
-        <h4>Your account has been successfully verified.</h4>
+        <h1> {{ trans('emails.verificationLink.success') }} </h1>
+        <h4> {{ trans('emails.verificationLink.verified') }} </h4>
     @else
         <h1>Oops!</h1>
-        <h4>Your account cannot be verified.</h4>
+        <h4> {{ trans('emails.verificationLink.not verified') }} </h4>
     @endif
 </body>
 

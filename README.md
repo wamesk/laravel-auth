@@ -220,7 +220,7 @@ Route::controller(\App\Http\Controllers\v1\AuthController::class)->prefix('v1')-
 
 Add documentation to function Example:
 `app/Http/Controllers/v1/AuthController.php`
-```
+```php
 class AuthController extends LaravelAuthController
 {
     /*
@@ -235,7 +235,7 @@ class AuthController extends LaravelAuthController
 
 Add data to login response / Edit function   Example:
 `app/Http/Controllers/v1/AuthController.php`
-```
+```php
     public function login(Request $request): JsonResponse
     {
         $return = parent::login($request);
@@ -248,8 +248,9 @@ Add data to login response / Edit function   Example:
         return $return;
     }
 ```
+
 Example how you can add parameters to registration by using Observer:
-```
+```php
 public function handle(UserCreatingEvent $event)
     {
         $user = $event->entity;
@@ -257,3 +258,4 @@ public function handle(UserCreatingEvent $event)
         $user->team_id = request()->team_id;
         $user->approve ?: $user->approve = 0;
     }
+```
