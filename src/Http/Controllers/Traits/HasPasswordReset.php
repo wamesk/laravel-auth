@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
 use App\Models\User;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -32,73 +36,76 @@ trait HasPasswordReset
      * @bodyParam method integer Must be one of 1, 2 or 3. Example: 1
      *
      * @response status=200 scenario="success" {
-        "data": null,
-        "code": "5.1.1",
-        "errors": null,
-        "message": "Password reset code has been sent."
-    }
+     * "data": null,
+     * "code": "5.1.1",
+     * "errors": null,
+     * "message": "Password reset code has been sent."
+     * }
      * @response status=400 scenario="bad request" {
-        "data": null,
-        "code": "1.1.1",
-        "errors": {
-            "email": ["The email field is required."],
-            "method": ["The method field is required."]
-        },
-        "message": "An error occurred while validating the form."
-    }
+     * "data": null,
+     * "code": "1.1.1",
+     * "errors": {
+     * "email": ["The email field is required."],
+     * "method": ["The method field is required."]
+     * },
+     * "message": "An error occurred while validating the form."
+     * }
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
-    public function sendPasswordReset(Request $request): \Illuminate\Http\JsonResponse
+    public function sendPasswordReset(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|max:255',
-            'method' => 'required|integer|in:1,2,3'
+            'method' => 'required|integer|in:1,2,3',
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::errors($validator->messages()->toArray())
-                ->code('1.1.1', $this->codePrefix)
-                ->response(400);
+            return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
         }
 
         $user = User::where('email', $request->email)->first();
 
         if ($user) {
+            $method = $request->get('method', 1);
             $code = random_int(100000, 999999);
+
             $userPasswordReset = UserPasswordReset::create([
                 'user_id' => $user->id,
                 'reset_method' => 1,
-                'value' => sha1($code),
-                'expired_at' => Carbon::now()->addMinutes(10)
+                'value' => sha1((string) $code),
+                'expired_at' => Carbon::now()->addMinutes(10),
             ]);
-            if ($request->method == 1) {
+
+            if (1 === $method) {
                 if ($userPasswordReset) {
-                    $user->notify(new PasswordResetCodeNotification($code));
+                    $user->notify(new PasswordResetCodeNotification((string) $code));
                     return ApiResponse::code('5.1.1', $this->codePrefix)->response();
                 }
             }
-            if ($request->method == 2) {
+            if (2 === $method) {
                 if ($userPasswordReset) {
                     // TODO: Send Password Reset Email Link
                     return ApiResponse::code('5.1.4', $this->codePrefix)->response();
                 }
             }
-            if ($request->method == 3) {
+            if (3 === $method) {
                 if ($userPasswordReset) {
                     $passwordToken = Password::createToken($user);
                     DB::table('password_resets')->insert([
                         'email' => $user->email,
                         'token' => Hash::make($passwordToken),
-                        'created_at' => Carbon::now()
+                        'created_at' => Carbon::now(),
                     ]);
                     $user->notify(new PasswordResetNovaNotification($passwordToken));
                     return ApiResponse::code('5.1.6', $this->codePrefix)->response();
                 }
             }
         }
+
+        return ApiResponse::code('5.1.7', $this->codePrefix)->response(400);
     }
 
     /**
@@ -113,21 +120,21 @@ trait HasPasswordReset
      *
      *
      * @response status=200 scenario="success" {
-        "data": null,
-        "code": "5.1.2",
-        "errors": null,
-        "message": "Password has been changed successfully."
-    }
+     * "data": null,
+     * "code": "5.1.2",
+     * "errors": null,
+     * "message": "Password has been changed successfully."
+     * }
      * @response status=403 scenario="forbidden" {
-        "data": null,
-        "code": "5.1.3",
-        "errors": null,
-        "message": "Password reset code is incorrect. Request a new code."
-    }
+     * "data": null,
+     * "code": "5.1.3",
+     * "errors": null,
+     * "message": "Password reset code is incorrect. Request a new code."
+     * }
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function validatePasswordReset(Request $request): \Illuminate\Http\JsonResponse
+    public function validatePasswordReset(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email|max:255',
@@ -137,9 +144,7 @@ trait HasPasswordReset
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::errors($validator->messages()->toArray())
-                ->code('1.1.1', $this->codePrefix)
-                ->response(400);
+            return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
         }
 
         $user = User::where('email', $request->email)->first();
@@ -148,12 +153,11 @@ trait HasPasswordReset
             'user_id' => $user->id,
             'reset_method' => $request->reset_method,
             'value' => sha1($request->value),
-            ['expired_at', '>=',Carbon::now()]
+            ['expired_at', '>=', Carbon::now()],
         ])->first();
 
         if (!$userPasswordReset) {
-            return ApiResponse::code('5.1.3', $this->codePrefix)
-                ->response(403);
+            return ApiResponse::code('5.1.3', $this->codePrefix)->response(403);
         }
 
         $user->update(['password' => Hash::make($request->new_password)]);

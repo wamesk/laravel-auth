@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
@@ -16,9 +19,15 @@ use Wame\LaravelAuth\Http\Controllers\Traits\HasRegistration;
  */
 class LaravelAuthController extends Controller
 {
-    use HasLogin, HasRegistration, HasPasswordReset, HasEmailVerification, HasLogout;
+    use HasEmailVerification;
+    use HasLogin;
+    use HasLogout;
+    use HasPasswordReset;
+    use HasRegistration;
 
-    /** @var string  */
+    /**
+     * @var string
+     */
     protected string $codePrefix = 'wame-auth::auth';
 
     /**
@@ -27,25 +36,26 @@ class LaravelAuthController extends Controller
      * @return mixed|void
      * @throws GuzzleException
      */
-    public function authUserWithOAuth2(string $email, string $password) {
+    public function authUserWithOAuth2(string $email, string $password)
+    {
         $client = new Client([
-            'http_errors' => false
+            'http_errors' => false,
         ]);
 
         try {
             $response = $client->post(env('APP_URL') . '/oauth/token', [
-                "form_params" => [
+                'form_params' => [
                     'grant_type' => 'password',
                     'client_id' => config('passport.personal_access_client.id'),
                     'client_secret' => config('passport.personal_access_client.secret'),
                     'username' => $email,
                     'password' => $password,
-                    'scope' => ''
-                ]
+                    'scope' => '',
+                ],
             ]);
 
             return json_decode($response->getBody()->getContents(), true);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             dd($exception->getMessage());
         }
     }
@@ -54,13 +64,15 @@ class LaravelAuthController extends Controller
      * @param array|null $passportResponse
      * @return array|void
      */
-    private function checkIfPassportHasError(array|null $passportResponse) {
+    private function checkIfPassportHasError(array|null $passportResponse)
+    {
         // If OAuth2 has errors
         if (isset($passportResponse['error'])) {
             // If email or password is invalid
-            if ($passportResponse['error'] == 'invalid_grant') {
+            if ('invalid_grant' === $passportResponse['error']) {
                 return [['2.1.1', $this->codePrefix], 403];
             }
+
             // If there is problem with OAuth2
             if (in_array($passportResponse['error'], ['invalid_secret', 'invalid_client'])) {
                 return [['1.1.2', $this->codePrefix], 403];

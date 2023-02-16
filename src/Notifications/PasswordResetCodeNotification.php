@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -10,26 +12,22 @@ class PasswordResetCodeNotification extends Notification
 {
     use Queueable;
 
-    /** @var string  */
-    protected string $code;
-
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param string $code
      */
-    public function __construct(string $code)
-    {
-        $this->code = $code;
-    }
+    public function __construct(
+        protected string $code
+    ) {}
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -48,13 +46,13 @@ class PasswordResetCodeNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
-            //
+
         ];
     }
 }

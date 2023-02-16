@@ -1,36 +1,33 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Wame\LaravelAuth\Mail\UserPasswordResetCodeMail;
 use Wame\LaravelAuth\Mail\UserPasswordResetNovaMail;
 
 class PasswordResetNovaNotification extends Notification
 {
     use Queueable;
 
-    /** @var string  */
-    protected string $token;
-
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param string $token
      */
-    public function __construct(string $token)
-    {
-        $this->token = $token;
-    }
+    public function __construct(
+        protected string $token
+    ) {}
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -39,7 +36,7 @@ class PasswordResetNovaNotification extends Notification
      * @param $notifiable
      * @return UserPasswordResetNovaMail
      */
-    public function toMail($notifiable)
+    public function toMail($notifiable): UserPasswordResetNovaMail
     {
         return (new UserPasswordResetNovaMail($notifiable, $this->token))->to($notifiable);
     }
@@ -47,13 +44,13 @@ class PasswordResetNovaNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [
-            //
+
         ];
     }
 }

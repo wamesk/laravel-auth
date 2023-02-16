@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 return [
     // Validations
     '1.1.1' => 'An error occurred while validating the form.',
@@ -28,5 +30,6 @@ return [
     '5.1.3' => 'Password reset code is incorrect. Request a new code.',
     '5.1.4' => 'Password reset link has been sent.',
     '5.1.5' => 'Password reset link is incorrect. Request a new link.',
-    '5.1.6' => 'Password reset nova link has been sent.'
+    '5.1.6' => 'Password reset nova link has been sent.',
+    '5.1.7' => 'An error occurred while resetting the password.',
 ];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 return [
     // Validations
     '1.1.1' => 'Neočakávana chyba pri validácii.',
@@ -28,5 +30,6 @@ return [
     '5.1.3' => 'Kód na obnovu hesla je nesprávny. Požiadajte o nový kód.',
     '5.1.4' => 'Link na obnovu hesla bol odoslaný.',
     '5.1.5' => 'Link na obnovu hesla je nesprávny. Požiadajte o nový link.',
-    '5.1.6' => 'Nova link na obnovu hesla bol odoslaný.'
+    '5.1.6' => 'Nova link na obnovu hesla bol odoslaný.',
+    '5.1.7' => 'Pri obnove hesla nastala chyba.',
 ];
