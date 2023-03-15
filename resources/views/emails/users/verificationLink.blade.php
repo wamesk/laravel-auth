@@ -1,10 +1,11 @@
 @component('mail::message')
-<h1>@lang('Verify your email address')</h1>
-<p>To continue setting up your account, please verify that this is your email address.</p>
 
-<p>@component('mail::button', ['url' => $verificationLink])@lang('Verify email address')@endcomponent</p>
+<h1>{{ trans('emails.verificationLink.h1') }}</h1>
+<p>{{ trans('emails.verificationLink.p') }}</p>
+<p>@component('mail::button', ['url' => $verificationLink]) {{ trans('emails.verificationLink.verify') }} @endcomponent</p>
+{{ trans('emails.verificationLink.regards') }} <br>
 
-
-@lang('Regards,') <br>
 {{ config('app.name') }}<br>
+
 @endcomponent
+

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Mail;
 
 use App\Models\User;
@@ -11,31 +13,25 @@ use Illuminate\Queue\SerializesModels;
 
 class UserPasswordResetNovaMail extends Mailable
 {
-    use Queueable, SerializesModels;
-
-    /** @var User  */
-    protected User $user;
-
-    /** @var string  */
-    protected string $token;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user, string $token)
-    {
-        $this->user = $user;
-        $this->token = $token;
-    }
+    public function __construct(
+        protected User $user,
+        protected string $token
+    ) {}
 
     /**
      * Get the message envelope.
      *
-     * @return \Illuminate\Mail\Mailables\Envelope
+     * @return Envelope
      */
-    public function envelope()
+    public function envelope(): Envelope
     {
         return new Envelope(
             subject: __('Password reset link!')
@@ -45,13 +41,13 @@ class UserPasswordResetNovaMail extends Mailable
     /**
      * Get the message content definition.
      *
-     * @return \Illuminate\Mail\Mailables\Content
+     * @return Content
      */
-    public function content()
+    public function content(): Content
     {
         return new Content(
             markdown: 'wame-auth::emails.users.passwordResetNova',
-            with: ['url' => route('nova.pages.password.reset', $this->token)]
+            with: ['url' => route('nova.pages.password.reset', $this->token) . '?email=' . $this->user->email]
         );
     }
 
@@ -60,7 +56,7 @@ class UserPasswordResetNovaMail extends Mailable
      *
      * @return array
      */
-    public function attachments()
+    public function attachments(): array
     {
         return [];
     }

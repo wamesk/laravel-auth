@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,7 +17,20 @@ use Spatie\EloquentSortable\SortableTrait;
 
 class BaseUser extends Authenticatable implements Sortable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, SortableTrait, LogsActivity;
+    use HasApiTokens;
+    use HasFactory;
+    use LogsActivity;
+    use Notifiable;
+    use SoftDeletes;
+    use SortableTrait;
+
+    /**
+     * @var array
+     */
+    public array $sortable = [
+        'order_column_name' => 'sort_order',
+        'sort_when_creating' => true,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +43,7 @@ class BaseUser extends Authenticatable implements Sortable
         'email',
         'email_verified_at',
         'last_login_at',
-        'password'
+        'password',
     ];
 
     /**
@@ -50,27 +66,18 @@ class BaseUser extends Authenticatable implements Sortable
         'last_login_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
-    ];
-
-    /**
-     * @var array
-     */
-    public array $sortable = [
-        'order_column_name' => 'sort_order',
-        'sort_when_creating' => true,
+        'deleted_at' => 'datetime',
     ];
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()
-            ->logExcept(['password', 'remember_token']);
+        return LogOptions::defaults()->logExcept(['password', 'remember_token']);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function passwordResets(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function passwordResets(): HasMany
     {
         return $this->hasMany(UserPasswordReset::class, 'user_id');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use Illuminate\Validation\Rules\Password;
 
 return [
@@ -7,7 +9,7 @@ return [
     // User Model
     'model' => \Wame\LaravelAuth\Models\BaseUser::class,
 
-    /* Login Options */
+    // Login Options
     'login' => [
 
         // Determine if login should be possible.
@@ -19,10 +21,10 @@ return [
         // Additional parameters to login request
         'additional_body_params' => [
             // Example: 'app_version' => 'required|string|min:1'
-        ]
+        ],
     ],
 
-    /* Register Options */
+    // Register Options
     'register' => [
 
         // Determine if registration should be possible.
@@ -40,28 +42,28 @@ return [
                 ->numbers()
                 ->symbols()
                 ->uncompromised(),
-            'confirmed'
+            'confirmed',
         ],
 
         // Additional parameters to register request
         'additional_body_params' => [
             // Example: 'app_version' => 'required|string|min:1'
-        ]
+        ],
     ],
 
-    /* Email verification Options */
+    // Email verification Options
     'email_verification' => [
 
         // Determine if email verification should be enabled.
         'enabled' => true,
 
         // The number of minutes the verification link is valid
-        'verification_link_expires_after' => 120
+        'verification_link_expires_after' => 120,
 
     ],
 
-    /* Routing Options */
+    // Routing Options
     'route' => [
-        'prefix' => 'api/v1'
-    ]
+        'prefix' => 'api/v1',
+    ],
 ];

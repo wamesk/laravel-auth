@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Mail;
 
 use App\Models\User;
@@ -11,31 +13,25 @@ use Illuminate\Queue\SerializesModels;
 
 class UserPasswordResetCodeMail extends Mailable
 {
-    use Queueable, SerializesModels;
-
-    /** @var User  */
-    protected User $user;
-
-    /** @var string  */
-    protected string $code;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user, string $code)
-    {
-        $this->user = $user;
-        $this->code = $code;
-    }
+    public function __construct(
+        protected User $user,
+        protected string $code
+    ) {}
 
     /**
      * Get the message envelope.
      *
-     * @return \Illuminate\Mail\Mailables\Envelope
+     * @return Envelope
      */
-    public function envelope()
+    public function envelope(): Envelope
     {
         return new Envelope(
             subject: __('Password reset code!')
@@ -45,9 +41,9 @@ class UserPasswordResetCodeMail extends Mailable
     /**
      * Get the message content definition.
      *
-     * @return \Illuminate\Mail\Mailables\Content
+     * @return Content
      */
-    public function content()
+    public function content(): Content
     {
         return new Content(
             markdown: 'wame-auth::emails.users.passwordResetCode',
@@ -60,7 +56,7 @@ class UserPasswordResetCodeMail extends Mailable
      *
      * @return array
      */
-    public function attachments()
+    public function attachments(): array
     {
         return [];
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Mail;
 
 use App\Models\User;
@@ -11,27 +13,24 @@ use Illuminate\Queue\SerializesModels;
 
 class UserRegisteredMail extends Mailable
 {
-    use Queueable, SerializesModels;
-
-    /** @var User  */
-    protected User $user;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
+    public function __construct(
+        protected User $user
+    ) {}
 
     /**
      * Get the message envelope.
      *
-     * @return \Illuminate\Mail\Mailables\Envelope
+     * @return Envelope
      */
-    public function envelope()
+    public function envelope(): Envelope
     {
         return new Envelope(
             subject: __('Verify your email address')
@@ -41,14 +40,13 @@ class UserRegisteredMail extends Mailable
     /**
      * Get the message content definition.
      *
-     * @return \Illuminate\Mail\Mailables\Content
+     * @return Content
      */
-    public function content()
+    public function content(): Content
     {
-        $url = $this->user->getEmailVerificationLink();
         return new Content(
             markdown: 'wame-auth::emails.users.registered',
-            with: ['url' => $url]
+            with: ['url' => $this->user->getEmailVerificationLink()]
         );
     }
 
@@ -57,7 +55,7 @@ class UserRegisteredMail extends Mailable
      *
      * @return array
      */
-    public function attachments()
+    public function attachments(): array
     {
         return [];
     }

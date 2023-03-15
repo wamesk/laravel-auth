@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Wame\LaravelAuth\Notifications;
 
 use App\Models\User;
@@ -12,23 +14,19 @@ class UserEmailVerificationByLinkNotification extends Notification
 {
     use Queueable;
 
-    /** @var string $verificationLink */
-    protected string $verificationLink;
-
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param string $verificationLink
      */
-    public function __construct(string $verificationLink)
-    {
-        $this->verificationLink = $verificationLink;
-    }
+    public function __construct(
+        protected string $verificationLink
+    ) {}
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  Model  $notifiable
+     * @param Model $notifiable
      * @return array
      */
     public function via(Model $notifiable): array
