@@ -26,6 +26,10 @@
         "laravel/passport": "^v11.5.0",
         "spatie/eloquent-sortable": "^4.0.1",
         "spatie/laravel-activitylog": "^4.7.2",
-        "wamesk/laravel-api-response": "^1.0.1"
+        "wamesk/laravel-api-response": "^1.0.1",
+        "laravel/socialite": "*",
+        "pusher/pusher-php-server": "*",
+        "socialiteproviders/github": "^4.1",
+        "socialiteproviders/google": "^4.1"
     }
 }

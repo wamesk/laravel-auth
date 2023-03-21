@@ -27,12 +27,11 @@
 </head>
 
 <body class="antialiased">
-    @if($user->hasVerifiedEmail())
-        <h1> {{ trans('emails.verificationLink.success') }} </h1>
-        <h4> {{ trans('emails.verificationLink.verified') }} </h4>
+    <h1> {{ $data['user']['name'] }} </h1>
+    @if($signature)
+        <h4> {{ trans('wame-auth::socialite-account.1.1.2') }} </h4>
     @else
-        <h1>Oops!</h1>
-        <h4> {{ trans('emails.verificationLink.not verified') }} </h4>
+        <h4> {{ trans('wame-auth::socialite-account.1.1.3') }} </h4>
     @endif
 </body>
 

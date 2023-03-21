@@ -81,4 +81,12 @@ class BaseUser extends Authenticatable implements Sortable
     {
         return $this->hasMany(UserPasswordReset::class, 'user_id');
     }
+
+    /**
+     * @return HasMany
+     */
+    public function socialAccounts(): HasMany
+    {
+        return $this->hasMany(SocialiteAccount::class, 'user_id');
+    }
 }

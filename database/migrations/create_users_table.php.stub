@@ -25,6 +25,18 @@ return new class extends Migration
             $table->softDeletes();
             $table->timestamps();
         });
+
+        Schema::create('socialite_accounts', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->integer('sort_order')->nullable();
+            $table->ulid('user_id');
+            $table->string('socialite_provider_id');
+            $table->string('provider_user_id');
+            $table->string('provider_user_token')->nullable();
+            $table->timestamp('last_login_at')->nullable();
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -35,5 +47,6 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('users');
+        Schema::dropIfExists('socialite_accounts');
     }
 };

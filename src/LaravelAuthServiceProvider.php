@@ -107,6 +107,9 @@ class LaravelAuthServiceProvider extends ServiceProvider
         if (!file_exists(database_path('/migrations/2014_01_17_135603_create_users_table.php'))) {
             $migrations[__DIR__ . '/../database/migrations/create_users_table.php.stub'] = database_path('migrations/2014_01_17_135603_create_users_table.php');
         }
+        if (!file_exists(database_path('/migrations/2023_01_17_135603_create_socialite_providers_table.php'))) {
+            $migrations[__DIR__ . '/../database/migrations/create_socialite_providers_table.php.stub'] = database_path('migrations/2023_01_17_135603_create_socialite_providers_table.php');
+        }
 
         $this->publishes($migrations, 'migrations');
     }

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::class)->name('auth.')
     ->group(function (): void {
+
         if (config('wame-auth.register.enabled')) {
             Route::post('/register', 'register')->name('register');
         }
@@ -22,3 +23,11 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::clas
         Route::post('/password/reset/send', 'sendPasswordReset')->name('password.reset.send');
         Route::post('/password/reset', 'validatePasswordReset')->name('password.reset');
     });
+
+Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteProviderController::class)
+    ->middleware('web')
+    ->name('socialite-provider.')
+    ->group(function (): void {
+        Route::get('/socialite-providers', 'index')->name('index');
+    });
+

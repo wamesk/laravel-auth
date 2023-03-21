@@ -28,7 +28,7 @@ class LaravelAuthController extends Controller
     /**
      * @var string
      */
-    protected string $codePrefix = 'wame-auth::auth';
+    public string $codePrefix = 'wame-auth::auth';
 
     /**
      * @param string $email
