@@ -76,8 +76,8 @@ trait HasSocial
             // Validate request
             $validator = Validator::code('6.1.2')->validate($request->all(), [
                 'token' => ['required', new IsString()],
-                'fcm_token' => ['required', new IsString()],
-                'version' => ['required', new IsString()],
+                'fcm_token' => [new IsString()],
+                'version' => [new IsString()],
             ]);
             if ($validator) return $validator;
 
