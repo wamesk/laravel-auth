@@ -22,6 +22,10 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::clas
 
         Route::post('/password/reset/send', 'sendPasswordReset')->name('password.reset.send');
         Route::post('/password/reset', 'validatePasswordReset')->name('password.reset');
+
+        if (config('wame-auth.social.enabled')) {
+            Route::post('/login/{provider}', 'socialLogin')->name('social-login');
+        }
     });
 
 Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteProviderController::class)

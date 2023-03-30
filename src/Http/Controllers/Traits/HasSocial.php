@@ -5,17 +5,23 @@ declare(strict_types = 1);
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
 use App\Models\User;
-use App\Utils\Helpers\OauthHelper;
+use Carbon\Carbon;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use Hamcrest\Core\Is;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
+use Psy\Util\Str;
 use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Http\Controllers\Helpers\BrowserHelper;
+use Wame\LaravelAuth\Http\Controllers\Helpers\OauthHelper;
 use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
+use Wame\Validator\Rules\IsString;
+use Wame\Validator\Utils\Validator;
 
-trait HasLogin
+trait HasSocial
 {
     /**
      * User Login
@@ -59,80 +65,77 @@ trait HasLogin
      * @return JsonResponse|ApiResponse
      * @throws GuzzleException
      */
-    public function login(Request $request): JsonResponse|ApiResponse
+    public function socialLogin(Request $request): JsonResponse|ApiResponse
     {
-        // Checks if users can log in
-        if (!config('wame-auth.login.enabled')) {
-            return ApiResponse::code('2.1.5', $this->codePrefix)->response(403);
-        }
-
-        // Validate request data
-        $dataToValidate = [
-            'email' => 'required|email|max:255',
-            'password' => 'required',
-        ];
-
-        $validator = Validator::make($request->all(), array_merge($dataToValidate, config('wame-auth.login.additional_body_params', [])));
-
-        if ($validator->fails()) {
-            return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
-        }
-
-        // Checks if user is not trashed
-        /** @var User $user */
-        $user = User::where(['email' => $request->email])->withTrashed()->first();
-        if ($user && $user->trashed()) {
-            return ApiResponse::code('2.1.4', $this->codePrefix)->response(403);
-        }
-
-        DB::beginTransaction();
-
-        // Try to authenticate user with OAuth2
-        $passport = $this->authUserWithOAuth2($request->email, $request->password);
-        $passportValidation = $this->checkIfPassportHasError($passport);
-        if (!empty($passportValidation)) {
-            return ApiResponse::code(...$passportValidation[0])->response($passportValidation[1]);
-        }
-
-        // If email verified email is required
-        if (config('wame-auth.login.only_verified')) {
-            if (!$user->hasVerifiedEmail()) {
-                return ApiResponse::code('2.1.2', $this->codePrefix)->response(403);
+        try {
+            // Checks if users can log in
+            if (!config('wame-auth.login.enabled')) {
+                return ApiResponse::code('6.1.1', $this->codePrefix)->response(403);
             }
-        }
 
-        if (class_exists('App\Models\Device')) {
-            
-            // Get Browser info
-            $browserInfo = BrowserHelper::getBrowserInfo();
-            $deviceName = BrowserHelper::getDeviceName($browserInfo);
-    
-            // Create or update device
-            $device = \App\Models\Device::updateOrCreate(
+            // Validate request
+            $validator = Validator::code('6.1.2')->validate($request->all(), [
+                'token' => ['required', new IsString()],
+                'fcm_token' => ['required', new IsString()],
+                'version' => ['required', new IsString()],
+            ]);
+            if ($validator) return $validator;
+
+            // Decode token
+            $jwt = OauthHelper::getJwtPayload($request->get('token'));
+
+            DB::beginTransaction();
+
+            // Create User or Update existing
+            $user = User::updateOrCreate(
                 [
-                    'user_id' => $user->id,
-                    'name' => $deviceName,
+                    'email' => $jwt->email
                 ],
                 [
-                    'user_id' => $user->id,
-                    'name' => $deviceName,
-                    'description' => $browserInfo,
-                    'fcm_token' => $request->get('fcm_token'),
-                    'version' => $request->get('version'),
-                    'last_login_at' => now(),
+                    'email' => $jwt->email,
+                    'name' => $jwt->name,
                 ]
             );
 
-            // Update oauth_access_tokens name with device id
-            $id = OauthHelper::getOauthAccessTokenId($passport['access_token']);
-            DB::select("UPDATE `oauth_access_tokens` SET `name` = '{$device->id}' WHERE `id` = '{$id}'");
+            if (class_exists('App\Models\Device')) {
+
+                // Get Browser info
+                $browserInfo = BrowserHelper::getBrowserInfo();
+                $deviceName = BrowserHelper::getDeviceName($browserInfo);
+
+                // Create or update device
+                $device = \App\Models\Device::updateOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'name' => $deviceName,
+                    ],
+                    [
+                        'user_id' => $user->id,
+                        'name' => $deviceName,
+                        'description' => $browserInfo,
+                        'fcm_token' => $request->get('fcm_token'),
+                        'version' => $request->get('version'),
+                        'last_login_at' => now(),
+                    ]
+                );
+            }
+
+            DB::commit();
+
+            // Create User access token0
+            $passport = $user->createToken($device->id ?? null);
+            $expiresIn = Carbon::now()->startOfDay()->diffInSeconds($passport->token->expires_at->startOfDay());
+
+            $data['user'] = new BaseUserResource($user);
+            $data['auth'] = [
+                'token_type' => 'Bearer',
+                'expires_in' => $expiresIn,
+                'access_token' => $passport->accessToken,
+            ];
+
+            return ApiResponse::data($data)->code('6.1.3', $this->codePrefix)->response();
+        } catch (Exception $e) {
+            return ApiResponse::code('')->message($e->getMessage())->response(500);
         }
-
-        DB::commit();
-
-        $data['user'] = new BaseUserResource($user);
-        $data['auth'] = $passport;
-
-        return ApiResponse::data($data)->code('2.1.3', $this->codePrefix)->response(200);
     }
 }

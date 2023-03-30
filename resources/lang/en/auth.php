@@ -32,4 +32,10 @@ return [
     '5.1.5' => 'Password reset link is incorrect. Request a new link.',
     '5.1.6' => 'Password reset nova link has been sent.',
     '5.1.7' => 'An error occurred while resetting the password.',
+
+    // Social login
+    '6.1.1' => 'Social login is disabled',
+    '6.1.2' => '', // only code
+    '6.1.3' => 'Social login was successful',
+    '6.1.4' => '', // only code
 ];

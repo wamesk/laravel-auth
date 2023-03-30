@@ -13,6 +13,7 @@ use Wame\LaravelAuth\Http\Controllers\Traits\HasLogin;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogout;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasRegistration;
+use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
 
 /**
  * @group OAuth2 User Management
@@ -24,6 +25,7 @@ class LaravelAuthController extends Controller
     use HasLogout;
     use HasPasswordReset;
     use HasRegistration;
+    use HasSocial;
 
     /**
      * @var string
@@ -46,8 +48,8 @@ class LaravelAuthController extends Controller
             $response = $client->post(env('APP_URL') . '/oauth/token', [
                 'form_params' => [
                     'grant_type' => 'password',
-                    'client_id' => config('passport.personal_access_client.id'),
-                    'client_secret' => config('passport.personal_access_client.secret'),
+                    'client_id' => config('passport.password_grant_client.id'),
+                    'client_secret' => config('passport.password_grant_client.secret'),
                     'username' => $email,
                     'password' => $password,
                     'scope' => '',
