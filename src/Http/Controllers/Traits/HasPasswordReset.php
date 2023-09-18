@@ -21,40 +21,41 @@ use Wame\LaravelAuth\Notifications\PasswordResetNovaNotification;
 trait HasPasswordReset
 {
     /**
-     * User Send Password Reset
-     *
-     * Send password reset code to email.
-     * <aside class="notice">
-     * <br>
-     * Method 1: Password Reset Via Email Code
-     * <br>
-     * Method 2: Password Reset Via Email Link
-     * <br>
-     * Method 3: Password Reset Via Nova Email Link
-     * </aside>
-     *
-     * @bodyParam method integer Must be one of 1, 2 or 3. Example: 1
-     *
-     * @response status=200 scenario="success" {
-     * "data": null,
-     * "code": "5.1.1",
-     * "errors": null,
-     * "message": "Password reset code has been sent."
-     * }
-     * @response status=400 scenario="bad request" {
-     * "data": null,
-     * "code": "1.1.1",
-     * "errors": {
-     * "email": ["The email field is required."],
-     * "method": ["The method field is required."]
-     * },
-     * "message": "An error occurred while validating the form."
-     * }
-     *
-     * @param Request $request
-     * @return JsonResponse
-     * @throws Exception
-     */
+ * User Send Password Reset
+ *
+ * Send password reset code to email.
+ * <aside class="notice">
+ * <br>
+ * Method 1: Password Reset Via Email Code
+ * <br>
+ * Method 2: Password Reset Via Email Link
+ * <br>
+ * Method 3: Password Reset Via Nova Email Link
+ * </aside>
+ *
+ * @bodyParam email string required Must be a valid email address. Must not be greater than 255 characters. Example: justine.quigley@example.org
+ * @bodyParam method integer required Must be one of 1, 2 or 3. Example: 1
+ *
+ * @response status=200 scenario="success" {
+ * "data": null,
+ * "code": "5.1.1",
+ * "errors": null,
+ * "message": "Password reset code has been sent."
+ * }
+ * @response status=400 scenario="bad request" {
+ * "data": null,
+ * "code": "1.1.1",
+ * "errors": {
+ * "email": ["The email field is required."],
+ * "method": ["The method field is required."]
+ * },
+ * "message": "An error occurred while validating the form."
+ * }
+ *
+ * @param Request $request
+ * @return JsonResponse
+ * @throws Exception
+ */
     public function sendPasswordReset(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [

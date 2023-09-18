@@ -31,3 +31,11 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteProviderController
         Route::get('/socialite-providers', 'index')->name('index');
     });
 
+
+Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteAccountController::class)
+    ->middleware('web')
+    ->name('socialite-account.')
+    ->group(function (): void {
+        Route::get('/socialite-account/{provider}', 'callback')->name('callback');
+    });
+

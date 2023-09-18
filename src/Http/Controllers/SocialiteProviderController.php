@@ -6,6 +6,7 @@ namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Http\Resources\v1\SocialiteProviderResource;
 use Wame\LaravelAuth\Models\SocialiteProvider;
@@ -30,5 +31,4 @@ class SocialiteProviderController extends Controller
             return ApiResponse::code('v2.6.1.3')->message($e->getMessage())->response(500);
         }
     }
-
 }

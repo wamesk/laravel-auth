@@ -7,10 +7,14 @@ namespace Wame\LaravelAuth\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use PHPUnit\Exception;
+use SocialiteProviders\Google\Provider;
+use SocialiteProviders\Manager\OAuth2\AbstractProvider;
 use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Events\SocialiteAccountAuthEvent;
 use Wame\LaravelAuth\Http\Controllers\Traits\SocialiteProviders;
@@ -70,6 +74,7 @@ class SocialiteAccountController extends Controller
 
         $config = $socialiteProvider->credentials;
         $config['redirect'] = $callBackUri;
+        //$config['redirect'] = "http://localhost:5173";
 
         $socialiteUser =  Socialite::buildProvider($socialiteProvider->class, $config)->user();
 
@@ -127,4 +132,38 @@ class SocialiteAccountController extends Controller
 
         return view('wame-auth::socialite-account')->withData($data)->withSignature($signature);
     }
+
+
+    /**
+     * @param Request $request
+     * @param $provider
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    private function getUser(Request $request, $provider): mixed
+    {
+        $response = $provider->getAccessTokenResponse($request->code);
+        $credentialsResponseBody = $response;
+
+        $token = Arr::get($credentialsResponseBody, 'access_token');
+
+        $user = $this->callProtectedMethod($provider, 'getUserByToken', $token);
+        return $this->callProtectedMethod($provider, 'mapUserToObject', $user);
+    }
+
+    /**
+     * @param $class
+     * @param $methodName
+     * @param $data
+     * @return mixed
+     * @throws \ReflectionException
+     */
+    protected function callProtectedMethod($class, $methodName, $data): mixed
+    {
+        $method = new \ReflectionMethod(get_class($class), $methodName);
+        $method->setAccessible(true);
+        return $method->invoke($class, $data);
+    }
+
+
 }
