@@ -127,7 +127,7 @@ trait HasRegistration
      * @param Request $request
      * @return mixed
      */
-    private function newUser(Request $request): mixed
+    protected function newUser(Request $request): mixed
     {
         return User::create([
             'name' => $request->name,

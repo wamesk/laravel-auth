@@ -62,6 +62,13 @@ return [
 
     ],
 
+    // Social login Options
+    'social' => [
+
+        // Determine if social login should be enabled.
+        'enabled' => true,
+    ],
+
     // Routing Options
     'route' => [
         'prefix' => 'api/v1',

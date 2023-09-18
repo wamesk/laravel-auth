@@ -62,6 +62,16 @@ Make changes to the `config/passport.php` file:
 
 ```php
 'guard' => 'api', // Change value to 'api'
+
+'password_grant_client' => [ // Password Grant Client - Login/Registration
+    'id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+    'secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+],
+
+'personal_access_client' => [ // Personal Access Client - Social
+    'id' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_ID'),
+    'secret' => env('PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET'),
+],
 ```
 
 Make changes in migrations `database/migrations/2023_01_17_074644_create_activity_log_table.php`:
@@ -94,8 +104,11 @@ php artisan passport:install
 ```
 Set passport output in `.env` file:
 ```bash
-PASSPORT_PERSONAL_ACCESS_CLIENT_ID=<"OUTPUT-GRANT-CLIENT-ID">
-PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=<"OUTPUT-GRANT-CLIENT-SECRET">
+PASSPORT_PERSONAL_ACCESS_CLIENT_ID=<"OUTPUT-PERSONAL-CLIENT-ID">
+PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=<"OUTPUT-PERSONAL-CLIENT-SECRET">
+
+PASSPORT_PASSWORD_GRANT_CLIENT_ID=<"OUTPUT-GRANT-CLIENT-ID">
+PASSPORT_PASSWORD_GRANT_CLIENT_SECRET=<"OUTPUT-GRANT-CLIENT-SECRET">
 ```
 
 
@@ -214,6 +227,10 @@ Route::controller(\App\Http\Controllers\v1\AuthController::class)->prefix('v1')-
 
         Route::post('/password/reset/send', 'sendPasswordReset')->name('password.reset.send');
         Route::post('/password/reset', 'validatePasswordReset')->name('password.reset');
+        
+        if (config('wame-auth.social.enabled')) {
+            Route::post('/login/{provider}', 'socialLogin')->name('social-login');
+        }
     });
 ```
 

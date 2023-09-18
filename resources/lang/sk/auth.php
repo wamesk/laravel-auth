@@ -32,4 +32,10 @@ return [
     '5.1.5' => 'Link na obnovu hesla je nesprávny. Požiadajte o nový link.',
     '5.1.6' => 'Nova link na obnovu hesla bol odoslaný.',
     '5.1.7' => 'Pri obnove hesla nastala chyba.',
+
+    // Social login
+    '6.1.1' => 'Prihlasovanie cez socialne siete je vypnuté',
+    '6.1.2' => '', // only code
+    '6.1.3' => 'Prihlasovanie cez sociálne siete prebehlo úspešne',
+    '6.1.4' => '', // only code
 ];

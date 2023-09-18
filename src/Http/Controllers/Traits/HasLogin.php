@@ -5,11 +5,14 @@ declare(strict_types = 1);
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
 use App\Models\User;
+use App\Utils\Helpers\OauthHelper;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Wame\ApiResponse\Helpers\ApiResponse;
+use Wame\LaravelAuth\Http\Controllers\Helpers\BrowserHelper;
 use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 
 trait HasLogin
@@ -82,6 +85,8 @@ trait HasLogin
             return ApiResponse::code('2.1.4', $this->codePrefix)->response(403);
         }
 
+        DB::beginTransaction();
+
         // Try to authenticate user with OAuth2
         $passport = $this->authUserWithOAuth2($request->email, $request->password);
         $passportValidation = $this->checkIfPassportHasError($passport);
@@ -95,6 +100,35 @@ trait HasLogin
                 return ApiResponse::code('2.1.2', $this->codePrefix)->response(403);
             }
         }
+
+        if (class_exists('App\Models\Device')) {
+            
+            // Get Browser info
+            $browserInfo = BrowserHelper::getBrowserInfo();
+            $deviceName = BrowserHelper::getDeviceName($browserInfo);
+    
+            // Create or update device
+            $device = \App\Models\Device::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'name' => $deviceName,
+                ],
+                [
+                    'user_id' => $user->id,
+                    'name' => $deviceName,
+                    'description' => $browserInfo,
+                    'fcm_token' => $request->get('fcm_token'),
+                    'version' => $request->get('version'),
+                    'last_login_at' => now(),
+                ]
+            );
+
+            // Update oauth_access_tokens name with device id
+            $id = OauthHelper::getOauthAccessTokenId($passport['access_token']);
+            DB::select("UPDATE `oauth_access_tokens` SET `name` = '{$device->id}' WHERE `id` = '{$id}'");
+        }
+
+        DB::commit();
 
         $data['user'] = new BaseUserResource($user);
         $data['auth'] = $passport;

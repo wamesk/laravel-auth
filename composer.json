@@ -30,6 +30,8 @@
         "laravel/socialite": "*",
         "pusher/pusher-php-server": "*",
         "socialiteproviders/github": "^4.1",
-        "socialiteproviders/google": "^4.1"
+        "socialiteproviders/google": "^4.1",
+        "hisorange/browser-detect": "^4.0",
+        "wamesk/laravel-validator": "*"
     }
 }
