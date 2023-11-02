@@ -32,6 +32,7 @@ return [
     '5.1.5' => 'Password reset link is incorrect. Request a new link.',
     '5.1.6' => 'Password reset nova link has been sent.',
     '5.1.7' => 'An error occurred while resetting the password.',
+    '5.1.8' => 'Account with this email does not exist.',
 
     // Social login
     '6.1.1' => 'Social login is disabled',

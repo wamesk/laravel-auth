@@ -104,6 +104,8 @@ trait HasPasswordReset
                     return ApiResponse::code('5.1.6', $this->codePrefix)->response();
                 }
             }
+        } else {
+            return ApiResponse::code('5.1.8', $this->codePrefix)->response(400);
         }
 
         return ApiResponse::code('5.1.7', $this->codePrefix)->response(400);

@@ -32,6 +32,7 @@ return [
     '5.1.5' => 'Link na obnovu hesla je nesprávny. Požiadajte o nový link.',
     '5.1.6' => 'Nova link na obnovu hesla bol odoslaný.',
     '5.1.7' => 'Pri obnove hesla nastala chyba.',
+    '5.1.8' => 'Účet s takýmto emailom neexistuje.',
 
     // Social login
     '6.1.1' => 'Prihlasovanie cez socialne siete je vypnuté',
