@@ -34,7 +34,7 @@ class UserEmailVerificationByLinkMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('Verify your email address')
+            subject: __(key: 'emails.verificationLink.subject')
         );
     }
 

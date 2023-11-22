@@ -34,7 +34,7 @@ class UserPasswordResetCodeMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('Password reset code!')
+            subject: __(key: 'emails.passwordResetCode.subject')
         );
     }
 

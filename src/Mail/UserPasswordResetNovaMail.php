@@ -34,7 +34,7 @@ class UserPasswordResetNovaMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('Password reset link!')
+            subject: __(key: 'emails.passwordResetNova.subject')
         );
     }
 
