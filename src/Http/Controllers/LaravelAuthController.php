@@ -6,8 +6,8 @@ namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Exception;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Request;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogin;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogout;
@@ -27,46 +27,31 @@ class LaravelAuthController extends Controller
     use HasRegistration;
     use HasSocial;
 
-    /**
-     * @var string
-     */
     public string $codePrefix = 'wame-auth::auth';
 
     /**
-     * @param string $email
-     * @param string $password
-     * @return mixed|void
-     * @throws GuzzleException
+     * @throws Exception
      */
-    public function authUserWithOAuth2(string $email, string $password)
+    public function authUserWithOAuth2(string $email, string $password): mixed
     {
-        $client = new Client([
-            'http_errors' => false,
-        ]);
+        $request = Request::create(
+            uri: '/oauth/token',
+            method: 'POST',
+            parameters: [
+                'grant_type' => 'password',
+                'client_id' => config('passport.password_grant_client.id'),
+                'client_secret' => config('passport.password_grant_client.secret'),
+                'username' => $email,
+                'password' => $password,
+                'scope' => '',
+            ],
+        );
+        $response = app()->handle($request);
 
-        try {
-            $response = $client->post(env('APP_URL') . '/oauth/token', [
-                'form_params' => [
-                    'grant_type' => 'password',
-                    'client_id' => config('passport.password_grant_client.id'),
-                    'client_secret' => config('passport.password_grant_client.secret'),
-                    'username' => $email,
-                    'password' => $password,
-                    'scope' => '',
-                ],
-            ]);
-
-            return json_decode($response->getBody()->getContents(), true);
-        } catch (Exception $exception) {
-            dd($exception->getMessage());
-        }
+        return json_decode($response->getContent(), true);
     }
 
-    /**
-     * @param array|null $passportResponse
-     * @return array|void
-     */
-    private function checkIfPassportHasError(array|null $passportResponse)
+    private function checkIfPassportHasError(?array $passportResponse): mixed
     {
         // If OAuth2 has errors
         if (isset($passportResponse['error'])) {
