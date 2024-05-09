@@ -11,10 +11,10 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::clas
             Route::post('/register', 'register')->name('register');
         }
 
-        if (config('wame-auth.login.enabled')) {
+        //if (config('wame-auth.login.enabled')) {
             Route::post('/login', 'login')->name('login');
             Route::middleware('auth:api')->post('/logout', 'logout')->name('logout');
-        }
+        //}
 
         if (config('wame-auth.email_verification.enabled')) {
             Route::post('/email/send_verification_link', 'sendVerificationLink')->name('verify.send_verification_link');
@@ -35,11 +35,9 @@ Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteProviderController
         Route::get('/socialite-providers', 'index')->name('index');
     });
 
-
 Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteAccountController::class)
     ->middleware('web')
     ->name('socialite-account.')
     ->group(function (): void {
         Route::get('/socialite-account/{provider}', 'callback')->name('callback');
     });
-

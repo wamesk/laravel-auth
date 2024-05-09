@@ -11,16 +11,31 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
+//use Spatie\Activitylog\LogOptions;
+//use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 
+/**
+ * 
+ *
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
+ * @property-read int|null $notifications_count
+ * @property-read User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset ordered(string $direction = 'asc')
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset query()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset withTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|UserPasswordReset withoutTrashed()
+ * @mixin \Eloquent
+ */
 class UserPasswordReset extends Model implements Sortable
 {
     use HasFactory;
     use HasUlids;
-    use LogsActivity;
+    //use LogsActivity;
     use Notifiable;
     use SoftDeletes;
     use SortableTrait;
@@ -44,13 +59,13 @@ class UserPasswordReset extends Model implements Sortable
         'deleted_at' => 'datetime',
     ];
 
-    /**
-     * @return LogOptions
-     */
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()->logAll();
-    }
+    ///**
+    // * @return LogOptions
+    // */
+    //public function getActivitylogOptions(): LogOptions
+    //{
+    //    return LogOptions::defaults()->logAll();
+    //}
 
     /**
      * @return BelongsTo

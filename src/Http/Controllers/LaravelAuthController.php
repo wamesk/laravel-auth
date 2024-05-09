@@ -6,14 +6,20 @@ namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Laravel\Nova\Http\Resources\UserResource;
+use Wame\LaravelAuth\Http\Actions\LoginAction;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogin;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasLogout;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasRegistration;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
+use Wame\LaravelAuth\Http\Requests\LoginRequest;
+use Illuminate\Contracts\Foundation\Application as ContractApplication;
 
 /**
  * @group OAuth2 User Management
@@ -26,6 +32,21 @@ class LaravelAuthController extends Controller
     use HasPasswordReset;
     use HasRegistration;
     use HasSocial;
+
+    public function login(LoginRequest $request, LoginAction $action): Application|Response|ContractApplication|ResponseFactory
+    {
+        $user = $action->handle(
+            email: $request->input('email'),
+            password: $request->input('password'),
+        );
+
+        return response([
+            'message' => __('laravel-auth::login.success'),
+            'data' => [
+                'user' => new UserResource($user),
+            ],
+        ]);
+    }
 
     public string $codePrefix = 'wame-auth::auth';
 

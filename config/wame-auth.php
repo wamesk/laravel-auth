@@ -7,7 +7,7 @@ use Illuminate\Validation\Rules\Password;
 return [
 
     // User Model
-    'model' => \Wame\LaravelAuth\Models\BaseUser::class,
+    'model' => 'App\\Models\\User',
 
     // Login Options
     'login' => [
