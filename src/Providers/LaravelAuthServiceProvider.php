@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Wame\LaravelAuth\Providers;
 
+use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Wame\LaravelAuth\Console\InstallLaravelAuth;
@@ -17,7 +19,7 @@ class LaravelAuthServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/wame-auth.php', 'wame-auth');
+        //$this->mergeConfigFrom(__DIR__ . '/../../config/wame-auth.php', 'wame-auth');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'wame-auth');
     }
 
@@ -29,9 +31,6 @@ class LaravelAuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            // Export the migration
-            $this->publishMigrations();
-
             // Export configs
             $this->publishConfigs();
 
@@ -47,7 +46,10 @@ class LaravelAuthServiceProvider extends ServiceProvider
             ]);
         }
 
+        $this->registerVerificationMail();
+
         $this->registerRoutes();
+
         $this->registerTranslations();
     }
 
@@ -59,7 +61,7 @@ class LaravelAuthServiceProvider extends ServiceProvider
         Route::group($this->routeConfiguration(), function (): void {
             $this->loadRoutesFrom(__DIR__ . '/../../routes/api.php');
         });
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        //$this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
     }
 
     /**
@@ -67,7 +69,7 @@ class LaravelAuthServiceProvider extends ServiceProvider
      */
     protected function registerTranslations(): void
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'wame-auth');
+        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'laravel-auth');
     }
 
     /**
@@ -78,40 +80,6 @@ class LaravelAuthServiceProvider extends ServiceProvider
         return [
             'prefix' => config('wame-auth.route.prefix', 'api/v1'),
         ];
-    }
-
-    /**
-     * @return void
-     */
-    private function publishMigrations(): void
-    {
-        // Delete old user migration
-        if (file_exists(database_path('/migrations/2014_10_12_000000_create_users_table.php'))) {
-            unlink(database_path('/migrations/2014_10_12_000000_create_users_table.php'));
-        }
-
-        // Default password reset table
-        if (file_exists(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'))) {
-            //unlink(database_path('/migrations/2014_10_12_100000_create_password_resets_table.php'));
-        }
-
-        $migrations = [];
-
-        // If user migrations are not published already
-        if (!file_exists(database_path('/migrations/2023_01_17_094244_change_oauth_passport_column_types.php'))) {
-            $migrations[__DIR__ . '/../../database/migrations/change_oauth_column_types.php.stub'] = database_path('migrations/2023_01_17_094244_change_oauth_passport_column_types.php');
-        }
-        if (!file_exists(database_path('/migrations/2023_01_17_135603_create_user_password_resets_table.php'))) {
-            $migrations[__DIR__ . '/../../database/migrations/create_user_password_resets_table.php.stub'] = database_path('migrations/2023_01_17_135603_create_user_password_resets_table.php');
-        }
-        if (!file_exists(database_path('/migrations/2014_01_17_135603_create_users_table.php'))) {
-            $migrations[__DIR__ . '/../../database/migrations/create_users_table.php.stub'] = database_path('migrations/2014_01_17_135603_create_users_table.php');
-        }
-        if (!file_exists(database_path('/migrations/2023_01_17_135603_create_socialite_providers_table.php'))) {
-            $migrations[__DIR__ . '/../../database/migrations/create_socialite_providers_table.php.stub'] = database_path('migrations/2023_01_17_135603_create_socialite_providers_table.php');
-        }
-
-        $this->publishes($migrations, 'migrations');
     }
 
     /**
@@ -142,5 +110,19 @@ class LaravelAuthServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../resources/lang' => resource_path('lang/vendor/laravel-auth'),
         ], 'translations');
+    }
+
+    /**
+     * @return void
+     */
+    private function registerVerificationMail(): void
+    {
+        VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
+            return (new MailMessage)
+                ->subject(__('laravel-auth::emails.verification_link.subject'))
+                ->markdown('wame-auth::emails.users.verification_link', [
+                    'verificationLink' => $url,
+                ]);
+        });
     }
 }

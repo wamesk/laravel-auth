@@ -19,20 +19,16 @@ return [
         'small' => 'Ak ste nepožiadali o zmenu hesla, ignorujte tento e-mail alebo kontaktujte správcu stránky.',
         'regards' => 'S pozdravom,',
     ],
-    'verificationLink' => [
+
+    'verification_link' => [
         'subject' => 'Overenie emailovej adresy',
         'h1' => 'Overte svoju e-mailovú adresu',
         'p' => 'Ak chcete pokračovať v nastavovaní účtu, overte, že toto je vaša e-mailová adresa.',
         'verify' => 'Overiť e-mailovú adresu',
         'regards' => 'S pozdravom,',
     ],
+
     'expiredVerification' => [
         'expired' => 'Prístup vypršal',
     ],
-    'verify' => [
-        'success!' => 'Úspech!',
-        'verified' => 'Vaše konto bolo úspešne overené.',
-        'not verified' => 'Vaše konto nie je možné overiť.',
-    ],
-
 ];

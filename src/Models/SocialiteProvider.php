@@ -20,6 +20,24 @@ use Spatie\EloquentSortable\SortableTrait;
  * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider query()
  * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider withTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider withoutTrashed()
+ * @property string $id
+ * @property int|null $sort_order
+ * @property string $title
+ * @property string $name
+ * @property string $class
+ * @property array $credentials
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereClass($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereCredentials($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereSortOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteProvider whereUpdatedAt($value)
  * @mixin \Eloquent
  */
 class SocialiteProvider extends Model implements Sortable

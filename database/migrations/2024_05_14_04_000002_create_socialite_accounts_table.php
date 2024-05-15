@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_password_resets', function (Blueprint $table) {
+        Schema::create('socialite_accounts', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->integer('sort_order')->nullable();
             $table->ulid('user_id');
-            $table->tinyInteger('reset_method')->default(0);
-            $table->string('value')->nullable();
-            $table->timestamp('expired_at')->nullable();
+            $table->string('socialite_provider_id');
+            $table->string('provider_user_id');
+            $table->string('provider_user_token')->nullable();
+            $table->timestamp('last_login_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_password_resets');
+        Schema::dropIfExists('socialite_accounts');
     }
 };

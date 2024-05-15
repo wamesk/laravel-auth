@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace Wame\LaravelAuth\Notifications;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification;
@@ -44,11 +43,11 @@ class UserEmailVerificationByLinkNotification extends Notification
     }
 
     /**
-     * @param User $notifiable
+     * @param Model $notifiable
      * @param $channel
      * @return bool
      */
-    public function shouldSend(User $notifiable, $channel): bool
+    public function shouldSend(Model $notifiable, $channel): bool
     {
         return !$notifiable->hasVerifiedEmail();
     }
