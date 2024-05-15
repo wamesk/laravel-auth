@@ -3,6 +3,7 @@
 namespace Wame\LaravelAuth\Http\Actions;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -10,10 +11,11 @@ class LoginAction
 {
     public function handle(
         string $email,
-        string $password
-    ): Model {
+        string $password,
+        string $deviceToken,
+    ): array {
         /** @var Model $userClass */
-        $userClass = resolve(config('wame-auth.model', 'App\Models\User'));
+        $userClass = resolve(config('wame-auth.model', 'App\\Models\\User'));
 
         /** @var Model $user */
         $user = $userClass::whereEmail($email)->withTrashed()->first();
@@ -26,12 +28,22 @@ class LoginAction
             abort(403, __('laravel-auth::login.user_was_deleted'));
         }
 
+        if (config('wame-auth.login.only_verified', false) && !isset($user->email_verified_at)) {
+            abort(403, __('laravel-auth::login.user_not_verified'));
+        }
+
         if (!Hash::check($password, $user->password)) {
             abort(403, __('laravel-auth::login.wrong_password'));
         }
 
-        $accessToken = $user->createToken(time() . '-' . $user->id);
+        /** @var RegisterDeviceAction $deviceAction */
+        $deviceAction = resolve(RegisterDeviceAction::class);
 
-        return $user->withAccessToken($accessToken);
+        $accessToken = $deviceAction->handle(
+            user: $user,
+            deviceToken: $deviceToken,
+        );
+
+        return [$user, $accessToken];
     }
 }

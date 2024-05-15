@@ -3,25 +3,23 @@
 declare(strict_types = 1);
 
 use Illuminate\Support\Facades\Route;
+use Wame\LaravelAuth\Http\Controllers\LaravelAuthController;
 
-Route::controller(\Wame\LaravelAuth\Http\Controllers\LaravelAuthController::class)->name('auth.')
+Route::post('/register', [LaravelAuthController::class, 'register'])->name('auth.register');
+
+Route::post('/login', [LaravelAuthController::class, 'login'])->name('auth.login');
+
+Route::post('/logout', [LaravelAuthController::class, 'logout'])->name('auth.logout');
+
+Route::post('/password/reset/send', [LaravelAuthController::class, 'sendPasswordReset'])->name('auth.password.reset.send');
+
+Route::post('/password/reset', [LaravelAuthController::class, 'validatePasswordReset'])->name('auth.password.reset');
+
+Route::controller(LaravelAuthController::class)->name('auth.')
     ->group(function (): void {
-
-        if (config('wame-auth.register.enabled')) {
-            Route::post('/register', 'register')->name('register');
-        }
-
-        //if (config('wame-auth.login.enabled')) {
-            Route::post('/login', 'login')->name('login');
-            Route::middleware('auth:api')->post('/logout', 'logout')->name('logout');
-        //}
-
         if (config('wame-auth.email_verification.enabled')) {
             Route::post('/email/send_verification_link', 'sendVerificationLink')->name('verify.send_verification_link');
         }
-
-        Route::post('/password/reset/send', 'sendPasswordReset')->name('password.reset.send');
-        Route::post('/password/reset', 'validatePasswordReset')->name('password.reset');
 
         if (config('wame-auth.social.enabled')) {
             Route::post('/login/{provider}', 'socialLogin')->name('social-login');

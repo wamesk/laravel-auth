@@ -4,14 +4,14 @@ namespace Wame\LaravelAuth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class VerifyEmailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return config('wame-auth.login.enabled', true);
+        return config('wame-auth.email_verification.enabled', false);
     }
 
     /**
@@ -21,12 +21,8 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
-        $configRules = config('wame-auth.login.rules', []);
-
-        return array_replace([
-            'email' => 'required|email|max:255',
-            'password' => 'required',
-            'device_token' => 'required|string|max:255',
-        ], $configRules);
+        return [
+            //
+        ];
     }
 }
