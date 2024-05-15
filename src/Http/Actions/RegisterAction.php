@@ -10,8 +10,9 @@ class RegisterAction
     public function handle(
         string $email,
         string $password,
+        string $deviceToken,
         array $requestData
-    ): Model {
+    ): array {
         /** @var Model $userClass */
         $userClass = resolve(config('wame-auth.model', 'App\\Models\\User'));
 
@@ -24,7 +25,15 @@ class RegisterAction
 
         event(resolve(Registered::class, compact('user')));
 
-        return $user;
+        /** @var RegisterDeviceAction $deviceAction */
+        $deviceAction = resolve(RegisterDeviceAction::class);
+
+        $accessToken = $deviceAction->handle(
+            user: $user,
+            deviceToken: $deviceToken,
+        );
+
+        return [$user, $accessToken];
     }
 
     protected function createUser(

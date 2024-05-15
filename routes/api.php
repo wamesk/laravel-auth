@@ -4,12 +4,13 @@ declare(strict_types = 1);
 
 use Illuminate\Support\Facades\Route;
 use Wame\LaravelAuth\Http\Controllers\LaravelAuthController;
+use Wame\LaravelAuth\Http\Middleware\UserDeviceMiddleware;
 
 Route::post('/register', [LaravelAuthController::class, 'register'])->name('auth.register');
 
 Route::post('/login', [LaravelAuthController::class, 'login'])->name('auth.login');
 
-Route::post('/logout', [LaravelAuthController::class, 'logout'])->name('auth.logout');
+Route::delete('/logout', [LaravelAuthController::class, 'logout'])->middleware(['auth:sanctum', UserDeviceMiddleware::class])->name('auth.logout');
 
 Route::post('/password/reset/send', [LaravelAuthController::class, 'sendPasswordReset'])->name('auth.password.reset.send');
 

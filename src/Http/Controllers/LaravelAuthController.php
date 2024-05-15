@@ -14,14 +14,15 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Nova\Http\Resources\UserResource;
 use Wame\LaravelAuth\Http\Actions\LoginAction;
+use Wame\LaravelAuth\Http\Actions\LogoutAction;
 use Wame\LaravelAuth\Http\Actions\RegisterAction;
 use Wame\LaravelAuth\Http\Actions\VerifyEmailAction;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
-use Wame\LaravelAuth\Http\Controllers\Traits\HasLogout;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
 use Wame\LaravelAuth\Http\Requests\LoginRequest;
 use Illuminate\Contracts\Foundation\Application as ContractApplication;
+use Wame\LaravelAuth\Http\Requests\LogoutRequest;
 use Wame\LaravelAuth\Http\Requests\RegisterRequest;
 use Wame\LaravelAuth\Http\Requests\VerifyEmailRequest;
 
@@ -31,7 +32,6 @@ use Wame\LaravelAuth\Http\Requests\VerifyEmailRequest;
 class LaravelAuthController extends Controller
 {
     use HasEmailVerification;
-    use HasLogout;
     use HasPasswordReset;
     use HasSocial;
 
@@ -43,32 +43,43 @@ class LaravelAuthController extends Controller
             deviceToken: $request->input('device_token'),
         );
 
+        $userResourceClass = config('wame-auth.model_resource', 'Wame\LaravelAuth\Http\Resources\v1\BaseUserResource');
+
         return response([
             'message' => __('laravel-auth::login.success'),
             'data' => [
-                'user' => new UserResource($user),
+                'user' => resolve($userResourceClass, ['resource' => $user]),
                 'access_token' => $accessToken,
             ],
         ]);
     }
 
-    public function logout()
+    public function logout(LogoutRequest $request, LogoutAction $action): Application|Response|ContractApplication|ResponseFactory
     {
+        $action->handle($request->get('device'));
 
+        return response([
+            'message' => __('laravel-auth::logout.success'),
+            'data' => [],
+        ]);
     }
 
     public function register(RegisterRequest $request, RegisterAction $action): Application|Response|ContractApplication|ResponseFactory
     {
-        $user = $action->handle(
+        [$user, $accessToken] = $action->handle(
             email: $request->input('email'),
             password: $request->input('password'),
+            deviceToken: $request->input('device_token'),
             requestData: $request->all(config('wame-auth.model_parameters', [])),
         );
+
+        $userResourceClass = config('wame-auth.model_resource', 'Wame\LaravelAuth\Http\Resources\v1\BaseUserResource');
 
         return response([
             'message' => __('laravel-auth::register.success'),
             'data' => [
-                'user' => new UserResource($user),
+                'user' => resolve($userResourceClass, ['resource' => $user]),
+                'access_token' => $accessToken,
             ],
         ]);
     }
