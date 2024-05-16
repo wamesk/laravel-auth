@@ -3,13 +3,14 @@
 namespace Wame\LaravelAuth\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $user_id
@@ -47,6 +48,7 @@ class UserDevice extends Model
     use HasApiTokens;
     use HasUlids;
     use SoftDeletes;
+    use HasFactory;
 
     protected $guarded = ['id'];
 

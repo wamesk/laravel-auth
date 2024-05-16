@@ -13,7 +13,8 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Wame\\LaravelAuth\\": "src"
+            "Wame\\LaravelAuth\\": "src",
+            "Wame\\LaravelAuth\\Database\\Factories\\": "database/factories"
         }
     },
     "extra": {
