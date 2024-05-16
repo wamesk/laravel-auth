@@ -11,6 +11,7 @@ return [
         'small' => 'Ak ste nepožiadali o zmenu hesla, ignorujte tento e-mail alebo kontaktujte správcu stránky.',
         'regards' => 'S pozdravom,',
     ],
+
     'passwordResetNova' => [
         'subject' => 'Odkaz na zmenu hesla!',
         'h1' => 'Dostali sme žiadosť o zmenu vášho hesla',

@@ -11,6 +11,7 @@ return [
         'small' => 'If you have not requested a password change, ignore this email or contact the site administrator.',
         'regards' => 'Regards,',
     ],
+
     'passwordResetNova' => [
         'subject' => 'Password reset link!',
         'h1' => 'We have received a request to change your password',
@@ -19,6 +20,7 @@ return [
         'small' => 'If you have not requested a password change, ignore this email or contact the site administrator.',
         'regards' => 'Regards,',
     ],
+
     'verificationLink' => [
         'subject' => 'Verify your email address',
         'h1' => 'Verify your email address',
@@ -26,13 +28,8 @@ return [
         'verify' => 'Verify email address',
         'regards' => 'Regards,',
     ],
+
     'expiredVerification' => [
         'expired' => 'Access expired.',
     ],
-    'verify' => [
-        'success!' => 'Success!',
-        'verified' => 'Your account has been successfully verified.',
-        'not verified' => 'Your account cannot be verified.',
-    ],
-
 ];
