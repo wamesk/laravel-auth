@@ -46,6 +46,7 @@ class LaravelAuthController extends Controller
         $userResourceClass = config('wame-auth.model_resource', 'Wame\LaravelAuth\Http\Resources\v1\BaseUserResource');
 
         return response([
+            'code' => 'laravel-auth::login.success',
             'message' => __('laravel-auth::login.success'),
             'data' => [
                 'user' => resolve($userResourceClass, ['resource' => $user]),

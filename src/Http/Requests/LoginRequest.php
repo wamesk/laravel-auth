@@ -2,6 +2,7 @@
 
 namespace Wame\LaravelAuth\Http\Requests;
 
+use Exception;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -28,5 +29,13 @@ class LoginRequest extends FormRequest
             'password' => 'required',
             'device_token' => 'required|string|max:255',
         ], $configRules);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function failedAuthorization()
+    {
+        abort(403, 'wame-auth::login.unauthorized');
     }
 }

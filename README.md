@@ -1,6 +1,6 @@
 # Laravel Auth
 
-OAuth2 authorization with API endpoints.
+Sanctum authorization with API endpoints.
 
 Also includes registration process, login, password reset, email validation.
 
@@ -22,25 +22,13 @@ Add the service provider to array of providers in `config/app.php`
 ];
 ```
 
-Install package with command:
-```bash
-php artisan wame:auth
-```
-Change `extends` method in `app/Models/User.php` to `Wame\LaravelAuth\Models\BaseUser`
+Make sure you have \App\Models\User class.
+If you have it with different namespace or classname you can change it in config/wame-auth.php
+
 ```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Wame\LaravelAuth\Models\BaseUser;
-
-class User extends BaseUser
-{
-    use HasUlids;
-
-}
+'model' => 'App\\Models\\User' // Change it here when needed
 ```
+
 Make changes to the `config/auth.php` file:
 
 ```php

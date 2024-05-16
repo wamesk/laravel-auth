@@ -9,6 +9,14 @@ return [
     // User Model
     'model' => 'App\\Models\\User',
 
+    'model_resource' => 'Wame\\LaravelAuth\\Http\\Resources\\v1\\BaseUserResource',
+
+    'device_model' => 'Wame\\LaravelAuth\\Models\\UserDevice',
+
+    'model_parameters' => [
+        'name',
+    ],
+
     // Login Options
     'login' => [
 
@@ -19,7 +27,7 @@ return [
         'only_verified' => false,
 
         // Additional parameters to login request
-        'additional_body_params' => [
+        'rules' => [
             // Example: 'app_version' => 'required|string|min:1'
         ],
     ],
@@ -34,7 +42,7 @@ return [
         'email_verification' => true,
 
         // Determine rules for password
-        'password_rules' => [
+        'rules' => [
             'required',
             'string',
             Password::min(8)
@@ -43,10 +51,7 @@ return [
                 ->symbols()
                 ->uncompromised(),
             'confirmed',
-        ],
 
-        // Additional parameters to register request
-        'additional_body_params' => [
             // Example: 'app_version' => 'required|string|min:1'
         ],
     ],
