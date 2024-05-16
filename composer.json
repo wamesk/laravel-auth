@@ -27,6 +27,7 @@
     "require": {
         "php": "^8.0",
         "laravel/framework": "^10.0|^11.0",
-        "hisorange/browser-detect": "^5.0"
+        "hisorange/browser-detect": "^5.0",
+        "wamesk/core": "dev-master"
     }
 }
