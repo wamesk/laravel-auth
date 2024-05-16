@@ -29,9 +29,9 @@ it('user with verified email login', function () {
     $enabledLogin = config('wame-auth.login.enabled');
 
     if ($enabledLogin) {
-        assertResponse($response, 200, 'laravel-auth::login.success', $user);
+        assertLoginResponse($response, 200, 'laravel-auth::login.success', $user);
     } else {
-        assertResponse($response, 403, 'laravel-auth::login.unauthorized');
+        assertLoginResponse($response, 403, 'laravel-auth::login.unauthorized');
     }
 });
 
@@ -57,12 +57,12 @@ it('user without verified email login', function () {
 
     if ($enabledLogin) {
         if ($onlyVerified) {
-            assertResponse($response, 403, 'laravel-auth::login.user_not_verified');
+            assertLoginResponse($response, 403, 'laravel-auth::login.user_not_verified');
         } else {
-            assertResponse($response, 200, 'laravel-auth::login.success', $user);
+            assertLoginResponse($response, 200, 'laravel-auth::login.success', $user);
         }
     } else {
-        assertResponse($response, 403, 'laravel-auth::login.unauthorized');
+        assertLoginResponse($response, 403, 'laravel-auth::login.unauthorized');
     }
 });
 
@@ -81,9 +81,9 @@ it('user not found login', function () {
     $enabledLogin = config('wame-auth.login.enabled');
 
     if ($enabledLogin) {
-        assertResponse($response, 404, 'laravel-auth::login.user_not_found');
+        assertLoginResponse($response, 404, 'laravel-auth::login.user_not_found');
     } else {
-        assertResponse($response, 403, 'laravel-auth::login.unauthorized');
+        assertLoginResponse($response, 403, 'laravel-auth::login.unauthorized');
     }
 });
 
@@ -110,9 +110,9 @@ it('user deleted login', function () {
 
     $response->assertStatus(403);
     if ($enabledLogin) {
-        assertResponse($response, 403, 'laravel-auth::login.user_was_deleted');
+        assertLoginResponse($response, 403, 'laravel-auth::login.user_was_deleted');
     } else {
-        assertResponse($response, 403, 'laravel-auth::login.unauthorized');
+        assertLoginResponse($response, 403, 'laravel-auth::login.unauthorized');
     }
 });
 
@@ -137,9 +137,9 @@ it('user wrong password login', function () {
 
     $response->assertStatus(403);
     if ($enabledLogin) {
-        assertResponse($response, 403, 'laravel-auth::login.wrong_password');
+        assertLoginResponse($response, 403, 'laravel-auth::login.wrong_password');
     } else {
-        assertResponse($response, 403, 'laravel-auth::login.unauthorized');
+        assertLoginResponse($response, 403, 'laravel-auth::login.unauthorized');
     }
 });
 
@@ -154,7 +154,7 @@ function createUser(Model $userClass, string $password, ?Carbon $emailVerifiedAt
     ]);
 }
 
-function assertResponse(TestResponse $response, int $statusCode, string $code, ?Model $user = null): void
+function assertLoginResponse(TestResponse $response, int $statusCode, string $code, ?Model $user = null): void
 {
     $json = [
         'code' => $code,

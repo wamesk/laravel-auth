@@ -21,7 +21,7 @@ it('user register with correct data', function () {
     ];
 
     // Act
-    $response = postRequest($userData, $password);
+    $response = postRegisterRequest($userData, $password);
 
     // Assert
     $registerEnabled = config('wame-auth.register.enabled');
@@ -29,9 +29,9 @@ it('user register with correct data', function () {
     $userClass = config('wame-auth.model');
 
     if ($registerEnabled) {
-        assertResponse($response, 200, 'laravel-auth::register.success', $userClass::whereEmail($userData['email'])->first());
+        assertRegisterResponse($response, 200, 'laravel-auth::register.success', $userClass::whereEmail($userData['email'])->first());
     } else {
-        assertResponse($response, 403, 'laravel-auth::register.unauthorized');
+        assertRegisterResponse($response, 403, 'laravel-auth::register.unauthorized');
     }
 });
 
@@ -48,15 +48,15 @@ it('user register with incorrect password confirmation', function () {
     ];
 
     // Act
-    $response = postRequest($userData, fake()->password());
+    $response = postRegisterRequest($userData, fake()->password());
 
     // Assert
     $registerEnabled = config('wame-auth.register.enabled');
 
     if ($registerEnabled) {
-        assertResponse($response, 422, __('validation.confirmed', ['attribute' => __('validation.attributes.password')]), onlyMessage: true);
+        assertRegisterResponse($response, 422, __('validation.confirmed', ['attribute' => __('validation.attributes.password')]), onlyMessage: true);
     } else {
-        assertResponse($response, 403, 'laravel-auth::register.unauthorized');
+        assertRegisterResponse($response, 403, 'laravel-auth::register.unauthorized');
     }
 });
 
@@ -77,19 +77,19 @@ it('user register with existing email user', function () {
     $userClass::create($userData);
 
     // Act
-    $response = postRequest($userData, $password);
+    $response = postRegisterRequest($userData, $password);
 
     // Assert
     $registerEnabled = config('wame-auth.register.enabled');
 
     if ($registerEnabled) {
-        assertResponse($response, 422, __('validation.unique', ['attribute' => __('validation.attributes.email')]), onlyMessage: true);
+        assertRegisterResponse($response, 422, __('validation.unique', ['attribute' => __('validation.attributes.email')]), onlyMessage: true);
     } else {
-        assertResponse($response, 403, 'laravel-auth::register.unauthorized');
+        assertRegisterResponse($response, 403, 'laravel-auth::register.unauthorized');
     }
 });
 
-function assertResponse(TestResponse $response, int $statusCode, string $code, ?Model $user = null, $onlyMessage = false): void
+function assertRegisterResponse(TestResponse $response, int $statusCode, string $code, ?Model $user = null, $onlyMessage = false): void
 {
     $json = [
         'code' => $code,
@@ -118,7 +118,7 @@ function assertResponse(TestResponse $response, int $statusCode, string $code, ?
     $response->assertJson($json);
 }
 
-function postRequest(array $userData, string $password): TestResponse
+function postRegisterRequest(array $userData, string $password): TestResponse
 {
     return post(route('auth.register'), array_merge($userData, [
         'password_confirmation' => $password,
