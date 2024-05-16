@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Wame\Core\Exceptions\WameException;
 
 class LoginAction
 {
+    /**
+     * @throws WameException
+     */
     public function handle(
         string $email,
         string $password,
@@ -21,19 +25,19 @@ class LoginAction
         $user = $userClass::whereEmail($email)->withTrashed()->first();
 
         if (!isset($user)) {
-            abort(404, 'laravel-auth::login.user_not_found');
+            throw new WameException('laravel-auth::login.user_not_found', 404);
         }
 
         if ($user->trashed()) {
-            abort(403, 'laravel-auth::login.user_was_deleted');
+            throw new WameException('laravel-auth::login.user_was_deleted', 403);
         }
 
         if (config('wame-auth.login.only_verified', false) && !isset($user->email_verified_at)) {
-            abort(403, 'laravel-auth::login.user_not_verified');
+            throw new WameException('laravel-auth::login.user_not_verified', 403);
         }
 
         if (!Hash::check($password, $user->password)) {
-            abort(403, 'laravel-auth::login.wrong_password');
+            throw new WameException('laravel-auth::login.wrong_password', 403);
         }
 
         /** @var RegisterDeviceAction $deviceAction */

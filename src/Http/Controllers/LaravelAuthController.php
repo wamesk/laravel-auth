@@ -60,6 +60,7 @@ class LaravelAuthController extends Controller
         $action->handle($request->get('device'));
 
         return response([
+            'code' => 'laravel-auth::logout.success',
             'message' => __('laravel-auth::logout.success'),
             'data' => [],
         ]);
@@ -77,6 +78,7 @@ class LaravelAuthController extends Controller
         $userResourceClass = config('wame-auth.model_resource', 'Wame\LaravelAuth\Http\Resources\v1\BaseUserResource');
 
         return response([
+            'code' => 'laravel-auth::register.success',
             'message' => __('laravel-auth::register.success'),
             'data' => [
                 'user' => resolve($userResourceClass, ['resource' => $user]),

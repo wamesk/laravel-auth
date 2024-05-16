@@ -3,7 +3,9 @@
 namespace Wame\LaravelAuth\Http\Requests;
 
 use Exception;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Wame\Core\Exceptions\WameException;
 
 class LoginRequest extends FormRequest
 {
@@ -34,8 +36,8 @@ class LoginRequest extends FormRequest
     /**
      * @throws Exception
      */
-    protected function failedAuthorization()
+    protected function failedAuthorization(): void
     {
-        abort(403, 'wame-auth::login.unauthorized');
+        throw new WameException('laravel-auth::login.unauthorized', 403);
     }
 }
