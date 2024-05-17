@@ -10,7 +10,7 @@ Route::post('/register', [LaravelAuthController::class, 'register'])->name('auth
 
 Route::post('/login', [LaravelAuthController::class, 'login'])->name('auth.login');
 
-Route::delete('/logout', [LaravelAuthController::class, 'logout'])->middleware(['auth:sanctum', UserDeviceMiddleware::class])->name('auth.logout');
+Route::post('/logout', [LaravelAuthController::class, 'logout'])->middleware(['auth:sanctum', UserDeviceMiddleware::class])->name('auth.logout');
 
 Route::post('/password/reset/send', [LaravelAuthController::class, 'sendPasswordReset'])->name('auth.password.reset.send');
 
