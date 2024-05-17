@@ -62,7 +62,6 @@ class LaravelAuthController extends Controller
         return response([
             'code' => 'laravel-auth::logout.success',
             'message' => __('laravel-auth::logout.success'),
-            'data' => [],
         ]);
     }
 
