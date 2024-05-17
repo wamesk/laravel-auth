@@ -2,12 +2,18 @@
 
 namespace Wame\LaravelAuth\Models;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use Laravel\Sanctum\PersonalAccessToken;
+use Wame\LaravelAuth\Database\Factories\UserDeviceFactory;
+use Wame\User\Models\User;
 
 /**
  *
@@ -18,29 +24,30 @@ use Laravel\Sanctum\HasApiTokens;
  * @property array|null $data
  * @property string|null $device_token
  * @property string|null $version
- * @property \Illuminate\Support\Carbon|null $last_login
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
+ * @property Carbon|null $last_login
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
- * @property-read \Wame\User\Models\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice query()
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereData($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereDeviceToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereLastLogin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereUserId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice whereVersion($value)
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice withTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|UserDevice withoutTrashed()
+ * @property-read User $user
+ * @method static Builder|UserDevice newModelQuery()
+ * @method static Builder|UserDevice newQuery()
+ * @method static Builder|UserDevice onlyTrashed()
+ * @method static Builder|UserDevice query()
+ * @method static Builder|UserDevice whereCreatedAt($value)
+ * @method static Builder|UserDevice whereData($value)
+ * @method static Builder|UserDevice whereDeletedAt($value)
+ * @method static Builder|UserDevice whereDeviceToken($value)
+ * @method static Builder|UserDevice whereId($value)
+ * @method static Builder|UserDevice whereLastLogin($value)
+ * @method static Builder|UserDevice whereName($value)
+ * @method static Builder|UserDevice whereUpdatedAt($value)
+ * @method static Builder|UserDevice whereUserId($value)
+ * @method static Builder|UserDevice whereVersion($value)
+ * @method static Builder|UserDevice withTrashed()
+ * @method static Builder|UserDevice withoutTrashed()
+ * @method static UserDeviceFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class UserDevice extends Model
