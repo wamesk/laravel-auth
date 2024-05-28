@@ -16,7 +16,7 @@ use Wame\LaravelAuth\Database\Factories\UserDeviceFactory;
 use Wame\User\Models\User;
 
 /**
- *
+ * 
  *
  * @property string $id
  * @property string $user_id
