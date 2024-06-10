@@ -19,10 +19,14 @@ it('user with verified email login', function () {
     $user = createUser($userClass, $password, now());
 
     // Act
+    $loginColumn = config('wame-auth.login.login_column');
+
     $response = post(route('auth.login'), [
-        'email' => $user->email,
+        $loginColumn => $user->$loginColumn,
         'password' => $password,
         'device_token' => fake()->uuid(),
+    ], [
+        'Accept' => 'application/json',
     ]);
 
     // Assert
@@ -45,10 +49,14 @@ it('user without verified email login', function () {
     $user = createUser($userClass, $password, null);
 
     // Act
+    $loginColumn = config('wame-auth.login.login_column');
+
     $response = post(route('auth.login'), [
-        'email' => $user->email,
+        $loginColumn => $user->$loginColumn,
         'password' => $password,
         'device_token' => fake()->uuid(),
+    ], [
+        'Accept' => 'application/json',
     ]);
 
     // Assert
@@ -71,10 +79,14 @@ it('user not found login', function () {
     $password = fake()->password();
 
     // Act
+    $loginColumn = config('wame-auth.login.login_column');
+
     $response = post(route('auth.login'), [
-        'email' => fake()->email(),
+        $loginColumn => fake()->word(),
         'password' => $password,
         'device_token' => fake()->uuid(),
+    ], [
+        'Accept' => 'application/json',
     ]);
 
     // Assert
@@ -99,10 +111,14 @@ it('user deleted login', function () {
     $user->delete();
 
     // Act
+    $loginColumn = config('wame-auth.login.login_column');
+
     $response = post(route('auth.login'), [
-        'email' => $user->email,
+        $loginColumn => $user->$loginColumn,
         'password' => $password,
         'device_token' => fake()->uuid(),
+    ], [
+        'Accept' => 'application/json',
     ]);
 
     // Assert
@@ -126,10 +142,14 @@ it('user wrong password login', function () {
     $user = createUser($userClass, $password, now());
 
     // Act
+    $loginColumn = config('wame-auth.login.login_column');
+
     $response = post(route('auth.login'), [
-        'email' => $user->email,
+        $loginColumn => $user->$loginColumn,
         'password' => fake()->password(),
         'device_token' => fake()->uuid(),
+    ], [
+        'Accept' => 'application/json',
     ]);
 
     // Assert
