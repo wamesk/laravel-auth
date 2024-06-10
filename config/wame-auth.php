@@ -19,6 +19,8 @@ return [
 
     // Login Options
     'login' => [
+        // Determine what column should be used for login.
+        'login_column' => 'email',
 
         // Determine if login should be possible.
         'enabled' => true,

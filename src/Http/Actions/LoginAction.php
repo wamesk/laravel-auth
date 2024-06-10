@@ -14,7 +14,7 @@ class LoginAction
      * @throws WameException
      */
     public function handle(
-        string $email,
+        string $loginColumn,
         string $password,
         string $deviceToken,
     ): array {
@@ -22,7 +22,9 @@ class LoginAction
         $userClass = resolve(config('wame-auth.model', 'App\\Models\\User'));
 
         /** @var Model $user */
-        $user = $userClass::whereEmail($email)->withTrashed()->first();
+        $user = $userClass::query()->where([
+            config('wame-auth.login.login_column', 'email') => $loginColumn,
+        ])->withTrashed()->first();
 
         if (!isset($user)) {
             throw new WameException('laravel-auth::login.user_not_found', 404);

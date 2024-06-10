@@ -12,7 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Nova\Http\Resources\UserResource;
+use Wame\Core\Exceptions\WameException;
 use Wame\LaravelAuth\Http\Actions\LoginAction;
 use Wame\LaravelAuth\Http\Actions\LogoutAction;
 use Wame\LaravelAuth\Http\Actions\RegisterAction;
@@ -35,10 +35,13 @@ class LaravelAuthController extends Controller
     use HasPasswordReset;
     use HasSocial;
 
+    /**
+     * @throws WameException
+     */
     public function login(LoginRequest $request, LoginAction $action): Application|Response|ContractApplication|ResponseFactory
     {
         [$user, $accessToken] = $action->handle(
-            email: $request->input('email'),
+            loginColumn: $request->input(config('wame-auth.login.login_column'), 'email'),
             password: $request->input('password'),
             deviceToken: $request->input('device_token'),
         );
