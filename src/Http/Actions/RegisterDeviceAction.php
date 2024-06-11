@@ -25,14 +25,24 @@ class RegisterDeviceAction
         return $device->createToken($deviceName)->plainTextToken;
     }
 
-    private function getDeviceName($browserInfo)
+    private function getDeviceName($browserInfo): string
     {
+        $deviceType = $browserInfo['deviceType'] ?? '';
+
         if ($browserInfo['isDesktop']) {
-            $name =  $browserInfo['deviceType'] . ' ' . $browserInfo['platformName'] . ' ' . $browserInfo['browserName'];
+            $platformName = $browserInfo['platformName'] ?? '';
+            $browserName = $browserInfo['browserName'] ?? '';
+
+            $name =  $deviceType . ' ' . $platformName . ' ' . $browserName;
         } elseif ($browserInfo['isMobile'] || $browserInfo['isTablet']) {
-            $name =  $browserInfo['deviceType'] . ' ' . $browserInfo['deviceFamily'] . ' ' . $browserInfo['deviceModel'] . ', ' . $browserInfo['mobileGrade'] . ', ' . $browserInfo['platformVersion'];
+            $deviceFamily = $browserInfo['deviceFamily'] ?? '';
+            $deviceModel = $browserInfo['deviceModel'] ?? '';
+            $mobileGrade = $browserInfo['mobileGrade'] ?? '';
+            $platformVersion = $browserInfo['platformVersion'] ?? '';
+
+            $name =  $deviceType . ' ' . $deviceFamily . ' ' . $deviceModel . ', ' . $mobileGrade . ', ' . $platformVersion;
         } else {
-            $name =  $browserInfo['userAgent'];
+            $name =  $browserInfo['userAgent'] ?? '';
         }
 
         return trim($name);
