@@ -5,6 +5,7 @@ namespace Wame\LaravelAuth\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,7 +17,7 @@ use Wame\LaravelAuth\Database\Factories\UserDeviceFactory;
 use Wame\User\Models\User;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string $user_id
@@ -66,6 +67,11 @@ class UserDevice extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    protected static function newFactory(): Factory|UserDeviceFactory
+    {
+        return UserDeviceFactory::new();
+    }
 
     /**
      * @return BelongsTo
