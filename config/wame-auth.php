@@ -2,15 +2,28 @@
 
 declare(strict_types = 1);
 
+use Wame\LaravelAuth\Models\UserDevice;
+use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 use Illuminate\Validation\Rules\Password;
+use Wame\User\Models\User;
 
 return [
 
     // User Model
-    'model' => \Wame\LaravelAuth\Models\BaseUser::class,
+    'model' => User::class,
+
+    'model_resource' => BaseUserResource::class,
+
+    'device_model' => UserDevice::class,
+
+    'model_parameters' => [
+        'name',
+    ],
 
     // Login Options
     'login' => [
+        // Determine what column should be used for login.
+        'login_column' => 'email',
 
         // Determine if login should be possible.
         'enabled' => true,
@@ -19,7 +32,7 @@ return [
         'only_verified' => false,
 
         // Additional parameters to login request
-        'additional_body_params' => [
+        'rules' => [
             // Example: 'app_version' => 'required|string|min:1'
         ],
     ],
@@ -34,19 +47,18 @@ return [
         'email_verification' => true,
 
         // Determine rules for password
-        'password_rules' => [
-            'required',
-            'string',
-            Password::min(8)
-                ->mixedCase()
-                ->numbers()
-                ->symbols()
-                ->uncompromised(),
-            'confirmed',
-        ],
+        'rules' => [
+            'password' => [
+                'required',
+                'string',
+                Password::min(8)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(),
+                'confirmed',
+            ],
 
-        // Additional parameters to register request
-        'additional_body_params' => [
             // Example: 'app_version' => 'required|string|min:1'
         ],
     ],
