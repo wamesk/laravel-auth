@@ -17,6 +17,7 @@ use Wame\LaravelAuth\Http\Actions\LoginAction;
 use Wame\LaravelAuth\Http\Actions\LogoutAction;
 use Wame\LaravelAuth\Http\Actions\RegisterAction;
 use Wame\LaravelAuth\Http\Actions\VerifyEmailAction;
+use Wame\LaravelAuth\Http\Controllers\Traits\HasAccountDelete;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
@@ -34,6 +35,7 @@ class LaravelAuthController extends Controller
     use HasEmailVerification;
     use HasPasswordReset;
     use HasSocial;
+    use HasAccountDelete;
 
     /**
      * @throws WameException

@@ -58,6 +58,15 @@ return [
         ],
     ],
 
+    // Account delete Options
+    'account_delete' => [
+        // Determine if deleting account should be possible
+        'enabled' => false,
+
+        // Hash email address upon deleting account
+        'hash_email' => false,
+    ],
+
     // Email verification Options
     'email_verification' => [
 

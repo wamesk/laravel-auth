@@ -25,6 +25,12 @@ Route::controller(LaravelAuthController::class)->name('auth.')
         if (config('wame-auth.social.enabled')) {
             Route::post('/login/{provider}', 'socialLogin')->name('social-login');
         }
+
+        if (config('wame-auth.account_delete.enabled')) {
+            Route::delete('/account/delete', 'deleteAccount')
+                ->middleware(['auth:sanctum', UserDeviceMiddleware::class])
+                ->name('account.delete');
+        }
     });
 
 Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteProviderController::class)
