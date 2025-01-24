@@ -28,11 +28,11 @@
 
 <body class="antialiased">
     @if($user->hasVerifiedEmail())
-        <h1> {{ trans('emails.verificationLink.success') }} </h1>
-        <h4> {{ trans('emails.verificationLink.verified') }} </h4>
+        <h1> {{ __('laravel-auth::verification.success') }} </h1>
+        <h4> {{ __('laravel-auth::verification.verified') }} </h4>
     @else
         <h1>Oops!</h1>
-        <h4> {{ trans('emails.verificationLink.not verified') }} </h4>
+        <h4> {{ __('laravel-auth::verification.not_verified') }} </h4>
     @endif
 </body>
 

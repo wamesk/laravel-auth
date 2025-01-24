@@ -48,19 +48,25 @@ return [
 
         // Determine rules for password
         'rules' => [
-            'password' => [
-                'required',
-                'string',
-                Password::min(8)
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised(),
-                'confirmed',
-            ],
-
+            'required',
+            'string',
+            Password::min(8)
+                ->mixedCase()
+                ->numbers()
+                ->symbols()
+                ->uncompromised(),
+            'confirmed',
             // Example: 'app_version' => 'required|string|min:1'
         ],
+    ],
+
+    // Account delete Options
+    'account_delete' => [
+        // Determine if deleting account should be possible
+        'enabled' => false,
+
+        // Hash email address upon deleting account
+        'hash_email' => false,
     ],
 
     // Email verification Options

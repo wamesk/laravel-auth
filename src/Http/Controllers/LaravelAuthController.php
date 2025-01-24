@@ -6,14 +6,26 @@ namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Wame\Laravel\Exceptions\WameException;
+use Wame\LaravelAuth\Http\Actions\LoginAction;
+use Wame\LaravelAuth\Http\Actions\LogoutAction;
+use Wame\LaravelAuth\Http\Actions\RegisterAction;
+use Wame\LaravelAuth\Http\Actions\VerifyEmailAction;
+use Wame\LaravelAuth\Http\Controllers\Traits\HasAccountDelete;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
-use Wame\LaravelAuth\Http\Controllers\Traits\HasLogin;
-use Wame\LaravelAuth\Http\Controllers\Traits\HasLogout;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
-use Wame\LaravelAuth\Http\Controllers\Traits\HasRegistration;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
+use Wame\LaravelAuth\Http\Requests\LoginRequest;
+use Illuminate\Contracts\Foundation\Application as ContractApplication;
+use Wame\LaravelAuth\Http\Requests\LogoutRequest;
+use Wame\LaravelAuth\Http\Requests\RegisterRequest;
+use Wame\LaravelAuth\Http\Requests\VerifyEmailRequest;
 
 /**
  * @group OAuth2 User Management
@@ -21,11 +33,68 @@ use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
 class LaravelAuthController extends Controller
 {
     use HasEmailVerification;
-    use HasLogin;
-    use HasLogout;
     use HasPasswordReset;
-    use HasRegistration;
     use HasSocial;
+    use HasAccountDelete;
+
+    /**
+     * @throws WameException
+     */
+    public function login(LoginRequest $request, LoginAction $action): Application|Response|ContractApplication|ResponseFactory
+    {
+        [$user, $accessToken] = $action->handle(
+            loginColumn: $request->input(config('wame-auth.login.login_column'), 'email'),
+            password: $request->input('password'),
+            deviceToken: $request->input('device_token'),
+        );
+
+        $userResourceClass = config('wame-auth.model_resource', 'Wame\LaravelAuth\Http\Resources\v1\BaseUserResource');
+
+        return response([
+            'code' => 'laravel-auth::login.success',
+            'message' => __('laravel-auth::login.success'),
+            'data' => [
+                'user' => resolve($userResourceClass, ['resource' => $user]),
+                'access_token' => $accessToken,
+            ],
+        ]);
+    }
+
+    public function logout(LogoutRequest $request, LogoutAction $action): Application|Response|ContractApplication|ResponseFactory
+    {
+        $action->handle($request->get('device'));
+
+        return response([
+            'code' => 'laravel-auth::logout.success',
+            'message' => __('laravel-auth::logout.success'),
+        ]);
+    }
+
+    public function register(RegisterRequest $request, RegisterAction $action): Application|Response|ContractApplication|ResponseFactory
+    {
+        [$user, $accessToken] = $action->handle(
+            email: $request->input('email'),
+            password: $request->input('password'),
+            deviceToken: $request->input('device_token'),
+            requestData: $request->all(config('wame-auth.model_parameters', [])),
+        );
+
+        $userResourceClass = config('wame-auth.model_resource', 'Wame\LaravelAuth\Http\Resources\v1\BaseUserResource');
+
+        return response([
+            'code' => 'laravel-auth::register.success',
+            'message' => __('laravel-auth::register.success'),
+            'data' => [
+                'user' => resolve($userResourceClass, ['resource' => $user]),
+                'access_token' => $accessToken,
+            ],
+        ]);
+    }
+
+    public function verifyEmail(VerifyEmailRequest $request, VerifyEmailAction $action): Factory|Application|View|ContractApplication
+    {
+        return $action->handle($request);
+    }
 
     public string $codePrefix = 'wame-auth::auth';
 
@@ -51,23 +120,4 @@ class LaravelAuthController extends Controller
         return json_decode($response->getContent(), true);
     }
 
-    private function checkIfPassportHasError(?array $passportResponse): mixed
-    {
-        // If OAuth2 has errors
-        if (isset($passportResponse['error'])) {
-            // If email or password is invalid
-            if ('invalid_grant' === $passportResponse['error']) {
-                return [['2.1.1', $this->codePrefix], 403];
-            }
-
-            // If there is problem with OAuth2
-            if (in_array($passportResponse['error'], ['invalid_secret', 'invalid_client'])) {
-                return [['1.1.2', $this->codePrefix], 403];
-            }
-
-            dd($passportResponse);
-        } else {
-            return [];
-        }
-    }
 }

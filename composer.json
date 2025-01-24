@@ -1,6 +1,6 @@
 {
     "name": "wamesk/laravel-auth",
-    "version": "3.0.9",
+    "version": "5.0.0",
     "description": "OAuth2 authorization with API endpoints. Also includes registration process, login, password reset, email validation.",
     "type": "library",
     "license": "MIT",
@@ -13,26 +13,19 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Wame\\LaravelAuth\\": "src"
+            "Wame\\LaravelAuth\\": "src",
+            "Wame\\LaravelAuth\\Database\\Factories\\": "database/factories"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Wame\\LaravelAuth\\LaravelAuthServiceProvider"
+                "Wame\\LaravelAuth\\Providers\\LaravelAuthServiceProvider"
             ]
         }
     },
     "require": {
-        "laravel/passport": "^v11.5.0",
-        "spatie/eloquent-sortable": "^4.0.1",
-        "spatie/laravel-activitylog": "^4.7.2",
-        "wamesk/laravel-api-response": "^1.0.1",
-        "laravel/socialite": "*",
-        "pusher/pusher-php-server": "*",
-        "socialiteproviders/github": "^4.1",
-        "socialiteproviders/google": "^4.1",
-        "hisorange/browser-detect": "^4.0",
-        "wamesk/laravel-validator": "*"
+        "hisorange/browser-detect": "^5.0",
+        "wamesk/laravel": "^1.0"
     }
 }

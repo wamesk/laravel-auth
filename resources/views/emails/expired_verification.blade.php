@@ -28,7 +28,7 @@
 
 <body class="antialiased">
     <h1>Oops!</h1>
-    <h4> {{ trans('emails.expiredVerification.expired') }} </h4>
+    <h4> {{ trans('laravel-auth::emails.expiredVerification.expired') }} </h4>
 </body>
 
 </html>
