@@ -3,7 +3,7 @@
 namespace Wame\LaravelAuth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Wame\Core\Exceptions\WameException;
+use Wame\Laravel\Exceptions\WameException;
 
 class RegisterRequest extends FormRequest
 {

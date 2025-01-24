@@ -12,7 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Wame\Core\Exceptions\WameException;
+use Wame\Laravel\Exceptions\WameException;
 use Wame\LaravelAuth\Http\Actions\LoginAction;
 use Wame\LaravelAuth\Http\Actions\LogoutAction;
 use Wame\LaravelAuth\Http\Actions\RegisterAction;

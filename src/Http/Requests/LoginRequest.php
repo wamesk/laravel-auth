@@ -5,7 +5,7 @@ namespace Wame\LaravelAuth\Http\Requests;
 use Exception;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Wame\Core\Exceptions\WameException;
+use Wame\Laravel\Exceptions\WameException;
 
 class LoginRequest extends FormRequest
 {

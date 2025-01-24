@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
-use Wame\Core\Exceptions\WameException;
+use Wame\Laravel\Exceptions\WameException;
 
 class LoginAction
 {
