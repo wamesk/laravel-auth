@@ -2,16 +2,19 @@
 
 declare(strict_types = 1);
 
+use Wame\LaravelAuth\Models\UserDevice;
+use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 use Illuminate\Validation\Rules\Password;
+use Wame\User\Models\User;
 
 return [
 
     // User Model
-    'model' => 'App\\Models\\User',
+    'model' => User::class,
 
-    'model_resource' => 'Wame\\LaravelAuth\\Http\\Resources\\v1\\BaseUserResource',
+    'model_resource' => BaseUserResource::class,
 
-    'device_model' => 'Wame\\LaravelAuth\\Models\\UserDevice',
+    'device_model' => UserDevice::class,
 
     'model_parameters' => [
         'name',
@@ -53,7 +56,6 @@ return [
                 ->symbols()
                 ->uncompromised(),
             'confirmed',
-
             // Example: 'app_version' => 'required|string|min:1'
         ],
     ],
