@@ -3,7 +3,6 @@
 namespace Wame\LaravelAuth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Wame\Laravel\Exceptions\WameException;
 
 class RegisterRequest extends FormRequest
 {
@@ -31,11 +30,8 @@ class RegisterRequest extends FormRequest
         ], $configRules);
     }
 
-    /**
-     * @throws WameException
-     */
     protected function failedAuthorization(): void
     {
-        throw new WameException('laravel-auth::register.unauthorized', 403);
+        abort(403, __('laravel-auth::register.unauthorized'));
     }
 }
