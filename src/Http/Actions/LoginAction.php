@@ -21,19 +21,19 @@ class LoginAction
         ])->withTrashed()->first();
 
         if (!isset($user)) {
-            abort(404, __(config('wame-auth.login.user_not_found')));
+            abort(404, __(config('wame-auth.login.messages.user_not_found')));
         }
 
         if ($user->trashed()) {
-            abort(403, __(config('wame-auth.login.user_was_deleted')));
+            abort(403, __(config('wame-auth.login.messages.user_was_deleted')));
         }
 
         if (config('wame-auth.login.only_verified', false) && !isset($user->email_verified_at)) {
-            abort(403, __(config('wame-auth.login.user_not_verified')));
+            abort(403, __(config('wame-auth.login.messages.user_not_verified')));
         }
 
         if (!Hash::check($password, $user->password)) {
-            abort(403, __(config('wame-auth.login.wrong_password')));
+            abort(403, __(config('wame-auth.login.messages.wrong_password')));
         }
 
         /** @var RegisterDeviceAction $deviceAction */
