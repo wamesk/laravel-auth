@@ -35,6 +35,13 @@ return [
         'rules' => [
             // Example: 'app_version' => 'required|string|min:1'
         ],
+
+        'messages' => [
+            'user_not_found' => 'laravel-auth::login.user_not_found',
+            'user_was_deleted' => 'laravel-auth::login.user_was_deleted',
+            'user_not_verified' => 'laravel-auth::login.user_not_verified',
+            'wrong_password' => 'laravel-auth::login.wrong_password',
+        ],
     ],
 
     // Register Options
