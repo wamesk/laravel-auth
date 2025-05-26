@@ -98,16 +98,16 @@ class RegisterDeviceAction
      */
     private function createOrUpdateDeviceModel(Model $deviceClass, string $deviceToken, Model $user, mixed $deviceName, array $browserInfo): \Illuminate\Database\Eloquent\Builder|Model
     {
-        $device = $deviceClass::query()->updateOrCreate([
+        return $deviceClass::query()->updateOrCreate([
             'device_token' => $deviceToken,
         ], [
             'user_id' => $user->id,
             'name' => $deviceName,
             'data' => $browserInfo,
             'device_token' => $deviceToken,
+            'version' => request()->header('app-version'),
             'last_login' => Carbon::now()
         ]);
-        return $device;
     }
 
 }
