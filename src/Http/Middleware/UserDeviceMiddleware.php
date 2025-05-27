@@ -23,7 +23,7 @@ class UserDeviceMiddleware
 
             if ($device instanceof $deviceClass) {
                 Auth::setUser($device->user);
-                $request->merge(['device' => $device]);
+                $request->headers->set('X-Device-ID', $device->id);
                 $request->setUserResolver(fn () => $device->user);
             }
         }
