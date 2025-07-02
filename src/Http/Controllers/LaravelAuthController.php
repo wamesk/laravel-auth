@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Wame\LaravelAuth\Http\Actions\LoginAction;
 use Wame\LaravelAuth\Http\Actions\LogoutAction;
 use Wame\LaravelAuth\Http\Actions\RegisterAction;
@@ -25,6 +26,7 @@ use Illuminate\Contracts\Foundation\Application as ContractApplication;
 use Wame\LaravelAuth\Http\Requests\LogoutRequest;
 use Wame\LaravelAuth\Http\Requests\RegisterRequest;
 use Wame\LaravelAuth\Http\Requests\VerifyEmailRequest;
+use Wame\LaravelAuth\Models\UserDevice;
 
 /**
  * @group OAuth2 User Management
@@ -58,7 +60,9 @@ class LaravelAuthController extends Controller
 
     public function logout(LogoutRequest $request, LogoutAction $action): Application|Response|ContractApplication|ResponseFactory
     {
-        $action->handle($request->get('device'));
+        $device = UserDevice::whereId($request->header('x-device-id'))->first();
+
+        $action->handle($device);
 
         return response([
             'code' => 'laravel-auth::logout.success',
