@@ -3,16 +3,16 @@
 namespace Wame\LaravelAuth\Http\Actions;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use hisorange\BrowserDetect\Parser as Browser;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class RegisterDeviceAction
 {
     public function handle(
         Model $user,
         string $deviceToken,
-    ): string
-    {
+    ): string {
         $browserInfo = $this->getBrowserInfo();
 
         /** @var Model $deviceClass */
@@ -20,7 +20,7 @@ class RegisterDeviceAction
 
         $deviceName = $this->getDeviceName($browserInfo);
 
-        $device = $this->createOrUpdateDeviceModel($deviceClass, $deviceToken, $user, $deviceName, $browserInfo);
+        $device = $this->createDevice($deviceClass, $deviceToken, $user, $deviceName, $browserInfo);
 
         return $device->createToken($deviceName)->plainTextToken;
     }
@@ -33,16 +33,16 @@ class RegisterDeviceAction
             $platformName = $browserInfo['platformName'] ?? '';
             $browserName = $browserInfo['browserName'] ?? '';
 
-            $name =  $deviceType . ' ' . $platformName . ' ' . $browserName;
+            $name = $deviceType.' '.$platformName.' '.$browserName;
         } elseif ($browserInfo['isMobile'] || $browserInfo['isTablet']) {
             $deviceFamily = $browserInfo['deviceFamily'] ?? '';
             $deviceModel = $browserInfo['deviceModel'] ?? '';
             $mobileGrade = $browserInfo['mobileGrade'] ?? '';
             $platformVersion = $browserInfo['platformVersion'] ?? '';
 
-            $name =  $deviceType . ' ' . $deviceFamily . ' ' . $deviceModel . ', ' . $mobileGrade . ', ' . $platformVersion;
+            $name = $deviceType.' '.$deviceFamily.' '.$deviceModel.', '.$mobileGrade.', '.$platformVersion;
         } else {
-            $name =  $browserInfo['userAgent'] ?? '';
+            $name = $browserInfo['userAgent'] ?? '';
         }
 
         return trim($name);
@@ -76,38 +76,26 @@ class RegisterDeviceAction
             'isAndroid' => Browser::isAndroid(),
             'deviceFamily' => Browser::deviceFamily(),
             'deviceModel' => Browser::deviceModel(),
-            //'mobileGrade' => Browser::mobileGrade(),
+            // 'mobileGrade' => Browser::mobileGrade(),
             'isChrome' => Browser::isChrome(),
             'isFirefox' => Browser::isFirefox(),
             'isOpera' => Browser::isOpera(),
             'isSafari' => Browser::isSafari(),
             'isIE' => Browser::isIE(),
-            //isIEVersion' => Browser::isIEVersion(),
+            // isIEVersion' => Browser::isIEVersion(),
             'isEdge' => Browser::isEdge(),
             'isInApp' => Browser::isInApp(),
         ];
     }
 
-    /**
-     * @param Model $deviceClass
-     * @param string $deviceToken
-     * @param Model $user
-     * @param mixed $deviceName
-     * @param array $browserInfo
-     * @return \Illuminate\Database\Eloquent\Builder|Model
-     */
-    private function createOrUpdateDeviceModel(Model $deviceClass, string $deviceToken, Model $user, mixed $deviceName, array $browserInfo): \Illuminate\Database\Eloquent\Builder|Model
+    private function createDevice(Model $deviceClass, string $deviceToken, Model $user, mixed $deviceName, array $browserInfo): Builder|Model
     {
-        $device = $deviceClass::query()->updateOrCreate([
-            'device_token' => $deviceToken,
-        ], [
+        return $deviceClass::query()->create([
             'user_id' => $user->id,
             'name' => $deviceName,
             'data' => $browserInfo,
             'device_token' => $deviceToken,
-            'last_login' => Carbon::now()
+            'last_login' => Carbon::now(),
         ]);
-        return $device;
     }
-
 }
