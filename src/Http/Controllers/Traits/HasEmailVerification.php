@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
-use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -37,8 +36,6 @@ trait HasEmailVerification
      * },
      * "message": "An error occurred while validating the form."
      * }
-     * @param Request $request
-     * @return JsonResponse
      */
     public function sendVerificationLink(Request $request): JsonResponse
     {
@@ -51,7 +48,8 @@ trait HasEmailVerification
             return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
         }
 
-        $user = User::where(['email' => $request->email])->first();
+        $modelClass = config('wame-auth.model');
+        $user = $modelClass::where(['email' => $request->email])->first();
 
         if ($user) {
             if ($user->hasVerifiedEmail()) {
@@ -75,15 +73,12 @@ trait HasEmailVerification
         return ApiResponse::code('4.1.2', $this->codePrefix)->response();
     }
 
-    /**
-     * @param Request $request
-     * @return Factory|Application|View
-     */
     public function verifyEmail(Request $request): View|Factory|Application
     {
-        $user = User::find($request->id);
+        $modelClass = config('wame-auth.model');
+        $user = $modelClass::find($request->id);
         if (URL::hasValidSignature($request) && $user) {
-            if (!$user->hasVerifiedEmail()) {
+            if (! $user->hasVerifiedEmail()) {
                 $user->markEmailAsVerified();
             }
 

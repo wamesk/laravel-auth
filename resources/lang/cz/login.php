@@ -6,5 +6,5 @@ return [
     'user_not_verified' => 'Uživatel s takovým e-mailem není ověřen.',
     'wrong_password' => 'Nesprávné heslo.',
     'success' => 'Přihlášení bylo úspěšné.',
-    'unauthorized' => 'Přihlášení není povoleno.'
+    'unauthorized' => 'Přihlášení není povoleno.',
 ];

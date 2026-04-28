@@ -13,7 +13,7 @@ class LoginAction
         string $deviceToken,
     ): array {
         /** @var Model $userClass */
-        $userClass = resolve(config('wame-auth.model', 'App\\Models\\User'));
+        $userClass = resolve(config('wame-auth.model'));
 
         /** @var Model $user */
         $user = $userClass::query()->where([

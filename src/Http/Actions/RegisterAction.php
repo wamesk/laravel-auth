@@ -14,7 +14,7 @@ class RegisterAction
         array $requestData
     ): array {
         /** @var Model $userClass */
-        $userClass = resolve(config('wame-auth.model', 'App\\Models\\User'));
+        $userClass = resolve(config('wame-auth.model'));
 
         $user = $this->createUser(
             userClass: $userClass,

@@ -1,19 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
-use App\Models\User;
+use App\Models\Device;
 use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
-use Hamcrest\Core\Is;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Psy\Util\Str;
 use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Http\Controllers\Helpers\BrowserHelper;
 use Wame\LaravelAuth\Http\Controllers\Helpers\OauthHelper;
@@ -32,25 +29,25 @@ trait HasSocial
      * @bodyParam fcm_token string Firebase Cloud Messaging Token for push notifications Example: f2oKFlM_Ty-rINTKCI6NnD:APA91bFrEtBye...
      * @bodyParam version string Mobile app version
      *
-     * @param Request $request
-     * @return JsonResponse|ApiResponse
      * @throws GuzzleException
      */
     public function socialLogin(Request $request): JsonResponse|ApiResponse
     {
         try {
             // Checks if users can log in
-            if (!config('wame-auth.social.enabled')) {
+            if (! config('wame-auth.social.enabled')) {
                 return ApiResponse::code('6.1.1', $this->codePrefix)->response(403);
             }
 
             // Validate request
             $validator = Validator::code('6.1.2')->validate($request->all(), [
-                'token' => ['required', new IsString()],
-                'fcm_token' => [new IsString()],
-                'version' => [new IsString()],
+                'token' => ['required', new IsString],
+                'fcm_token' => [new IsString],
+                'version' => [new IsString],
             ]);
-            if ($validator) return $validator;
+            if ($validator) {
+                return $validator;
+            }
 
             // Decode token
             $jwt = OauthHelper::getJwtPayload($request->get('token'));
@@ -58,9 +55,10 @@ trait HasSocial
             DB::beginTransaction();
 
             // Create User or Update existing
-            $user = User::updateOrCreate(
+            $modelClass = config('wame-auth.model');
+            $user = $modelClass::updateOrCreate(
                 [
-                    'email' => $jwt->email
+                    'email' => $jwt->email,
                 ],
                 [
                     'email' => $jwt->email,
@@ -75,7 +73,7 @@ trait HasSocial
                 $deviceName = BrowserHelper::getDeviceName($browserInfo);
 
                 // Create or update device
-                $device = \App\Models\Device::updateOrCreate(
+                $device = Device::updateOrCreate(
                     [
                         'user_id' => $user->id,
                         'name' => $deviceName,

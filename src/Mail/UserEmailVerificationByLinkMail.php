@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
@@ -17,19 +16,13 @@ class UserEmailVerificationByLinkMail extends Mailable
     use Queueable;
     use SerializesModels;
 
-    /**
-     * @param User|Model $user
-     * @param string $verificationLink
-     */
     public function __construct(
-        protected User|Model $user,
+        protected Model $user,
         protected string $verificationLink
     ) {}
 
     /**
      * Get the message envelope.
-     *
-     * @return Envelope
      */
     public function envelope(): Envelope
     {
@@ -40,8 +33,6 @@ class UserEmailVerificationByLinkMail extends Mailable
 
     /**
      * Get the message content definition.
-     *
-     * @return Content
      */
     public function content(): Content
     {
@@ -53,8 +44,6 @@ class UserEmailVerificationByLinkMail extends Mailable
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array
      */
     public function attachments(): array
     {

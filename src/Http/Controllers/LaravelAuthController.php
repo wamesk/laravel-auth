@@ -1,18 +1,18 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Exception;
+use Illuminate\Contracts\Foundation\Application as ContractApplication;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Wame\LaravelAuth\Http\Actions\LoginAction;
 use Wame\LaravelAuth\Http\Actions\LogoutAction;
 use Wame\LaravelAuth\Http\Actions\RegisterAction;
@@ -22,7 +22,6 @@ use Wame\LaravelAuth\Http\Controllers\Traits\HasEmailVerification;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasPasswordReset;
 use Wame\LaravelAuth\Http\Controllers\Traits\HasSocial;
 use Wame\LaravelAuth\Http\Requests\LoginRequest;
-use Illuminate\Contracts\Foundation\Application as ContractApplication;
 use Wame\LaravelAuth\Http\Requests\LogoutRequest;
 use Wame\LaravelAuth\Http\Requests\RegisterRequest;
 use Wame\LaravelAuth\Http\Requests\VerifyEmailRequest;
@@ -33,10 +32,10 @@ use Wame\LaravelAuth\Models\UserDevice;
  */
 class LaravelAuthController extends Controller
 {
+    use HasAccountDelete;
     use HasEmailVerification;
     use HasPasswordReset;
     use HasSocial;
-    use HasAccountDelete;
 
     public function login(LoginRequest $request, LoginAction $action): Application|Response|ContractApplication|ResponseFactory
     {
@@ -119,5 +118,4 @@ class LaravelAuthController extends Controller
 
         return json_decode($response->getContent(), true);
     }
-
 }

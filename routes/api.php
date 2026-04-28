@@ -1,9 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
 use Wame\LaravelAuth\Http\Controllers\LaravelAuthController;
+use Wame\LaravelAuth\Http\Controllers\SocialiteAccountController;
+use Wame\LaravelAuth\Http\Controllers\SocialiteProviderController;
 use Wame\LaravelAuth\Http\Middleware\UserDeviceMiddleware;
 
 Route::post('/register', [LaravelAuthController::class, 'register'])->name('auth.register');
@@ -33,14 +35,14 @@ Route::controller(LaravelAuthController::class)->name('auth.')
         }
     });
 
-Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteProviderController::class)
+Route::controller(SocialiteProviderController::class)
     ->middleware('web')
     ->name('socialite-provider.')
     ->group(function (): void {
         Route::get('/socialite-providers', 'index')->name('index');
     });
 
-Route::controller(\Wame\LaravelAuth\Http\Controllers\SocialiteAccountController::class)
+Route::controller(SocialiteAccountController::class)
     ->middleware('web')
     ->name('socialite-account.')
     ->group(function (): void {

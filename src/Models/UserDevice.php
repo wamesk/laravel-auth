@@ -14,11 +14,8 @@ use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\PersonalAccessToken;
 use Wame\LaravelAuth\Database\Factories\UserDeviceFactory;
-use Wame\User\Models\User;
 
 /**
- *
- *
  * @property string $id
  * @property string $user_id
  * @property string|null $name
@@ -31,7 +28,8 @@ use Wame\User\Models\User;
  * @property Carbon|null $deleted_at
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
- * @property-read User $user
+ * @property-read Model $user
+ *
  * @method static Builder|UserDevice newModelQuery()
  * @method static Builder|UserDevice newQuery()
  * @method static Builder|UserDevice onlyTrashed()
@@ -49,14 +47,15 @@ use Wame\User\Models\User;
  * @method static Builder|UserDevice withTrashed()
  * @method static Builder|UserDevice withoutTrashed()
  * @method static UserDeviceFactory factory($count = null, $state = [])
+ *
  * @mixin \Eloquent
  */
 class UserDevice extends Model
 {
     use HasApiTokens;
+    use HasFactory;
     use HasUlids;
     use SoftDeletes;
-    use HasFactory;
 
     protected $guarded = ['id'];
 
@@ -73,9 +72,6 @@ class UserDevice extends Model
         return UserDeviceFactory::new();
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(config('wame-auth.model'), 'user_id');

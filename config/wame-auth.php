@@ -1,10 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
-use Wame\LaravelAuth\Models\UserDevice;
-use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 use Illuminate\Validation\Rules\Password;
+use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
+use Wame\LaravelAuth\Models\UserDevice;
 use Wame\User\Models\User;
 
 return [

@@ -1,41 +1,33 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
-use PHPUnit\Exception;
-use SocialiteProviders\Google\Provider;
-use SocialiteProviders\Manager\OAuth2\AbstractProvider;
 use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Events\SocialiteAccountAuthEvent;
 use Wame\LaravelAuth\Http\Controllers\Traits\SocialiteProviders;
 use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
-use Wame\LaravelAuth\Models\SocialiteProvider;
 use Wame\LaravelAuth\Models\SocialiteAccount;
+use Wame\LaravelAuth\Models\SocialiteProvider;
 
 class SocialiteAccountController extends Controller
 {
     use SocialiteProviders;
 
-    /**
-     * @var string
-     */
     protected string $codePrefix = 'wame-auth::socialite-account';
 
-    /**
-     * @param Request $request
-     * @param string $providerId
-     * @return mixed
-     */
     public function redirect(Request $request, string $providerId): mixed
     {
         $socialiteProvider = SocialiteProvider::find($providerId);
@@ -57,13 +49,11 @@ class SocialiteAccountController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param string $provider
-     * @param string|null $signature
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param  string|null  $signature
+     *
+     * @throws GuzzleException
      */
-    public function callback(Request $request, string $provider): \Illuminate\Foundation\Application|\Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\Foundation\Application
+    public function callback(Request $request, string $provider): Application|View|Factory|\Illuminate\Contracts\Foundation\Application
     {
         $socialiteProvider = SocialiteProvider::find($provider);
 
@@ -74,35 +64,36 @@ class SocialiteAccountController extends Controller
 
         $config = $socialiteProvider->credentials;
         $config['redirect'] = $callBackUri;
-        //$config['redirect'] = "http://localhost:5173";
+        // $config['redirect'] = "http://localhost:5173";
 
-        $socialiteUser =  Socialite::buildProvider($socialiteProvider->class, $config)->user();
+        $socialiteUser = Socialite::buildProvider($socialiteProvider->class, $config)->user();
 
-        $socialiteUser =  [
+        $socialiteUser = [
             'provider_id' => $socialiteUser->getId(),
             'provider_email' => $socialiteUser->getEmail(),
             'provider_name' => $socialiteUser->getName(),
-            'provider_token' => $socialiteUser->token
+            'provider_token' => $socialiteUser->token,
         ];
 
         // Check if user exists
-        $user = User::where(['email' => $socialiteUser['provider_email']])->first();
+        $modelClass = config('wame-auth.model');
+        $user = $modelClass::where(['email' => $socialiteUser['provider_email']])->first();
 
         if ($user) {
             // Check User
             $userSocialAccount = $user->socialAccounts()->where('socialite_provider_id', '=', $socialiteProvider->id)->first();
 
-            if (!$userSocialAccount) {
+            if (! $userSocialAccount) {
                 abort(403, __('wame-auth::socialite-account.1.1.1'));
             }
 
         } else {
 
             // Register User
-            $user = User::create([
+            $user = $modelClass::create([
                 'name' => $socialiteUser['provider_name'],
                 'email' => $socialiteUser['provider_email'],
-                'password' => Hash::make($socialiteUser['provider_token'])
+                'password' => Hash::make($socialiteUser['provider_token']),
             ]);
 
             $userSocialAccount = SocialiteAccount::create([
@@ -115,12 +106,12 @@ class SocialiteAccountController extends Controller
 
         Auth::login($user);
 
-        $laravelAuthController = new LaravelAuthController();
+        $laravelAuthController = new LaravelAuthController;
         $auth = $laravelAuthController->authUserWithOAuth2($user->email, $userSocialAccount->provider_user_token);
 
         $data = [
             'user' => (array) (new BaseUserResource($user))->toResponse(app('request'))->getData()->data,
-            'auth' => $auth
+            'auth' => $auth,
         ];
 
         if ($signature) {
@@ -133,11 +124,7 @@ class SocialiteAccountController extends Controller
         return view('wame-auth::socialite-account')->withData($data)->withSignature($signature);
     }
 
-
     /**
-     * @param Request $request
-     * @param $provider
-     * @return mixed
      * @throws \ReflectionException
      */
     private function getUser(Request $request, $provider): mixed
@@ -148,22 +135,18 @@ class SocialiteAccountController extends Controller
         $token = Arr::get($credentialsResponseBody, 'access_token');
 
         $user = $this->callProtectedMethod($provider, 'getUserByToken', $token);
+
         return $this->callProtectedMethod($provider, 'mapUserToObject', $user);
     }
 
     /**
-     * @param $class
-     * @param $methodName
-     * @param $data
-     * @return mixed
      * @throws \ReflectionException
      */
     protected function callProtectedMethod($class, $methodName, $data): mixed
     {
         $method = new \ReflectionMethod(get_class($class), $methodName);
         $method->setAccessible(true);
+
         return $method->invoke($class, $data);
     }
-
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
@@ -14,6 +14,7 @@ trait HasLogout
      * User Logout
      *
      * Revoke all user OAuth2 tokens.
+     *
      * @authenticated
      *
      * @response status=200 scenario="success" {
@@ -25,9 +26,6 @@ trait HasLogout
      * @response status=401 scenario="unauthorized" {
      * "message": "Unauthenticated."
      * }
-     *
-     * @param Request $request
-     * @return JsonResponse|ApiResponse
      */
     public function logout(Request $request): JsonResponse|ApiResponse
     {

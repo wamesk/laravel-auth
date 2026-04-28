@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Providers;
 
@@ -14,24 +14,20 @@ class LaravelAuthServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register(): void
     {
-        //$this->mergeConfigFrom(__DIR__ . '/../../config/wame-auth.php', 'wame-auth');
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'wame-auth');
+        // $this->mergeConfigFrom(__DIR__ . '/../../config/wame-auth.php', 'wame-auth');
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'wame-auth');
     }
 
     /**
      * Bootstrap any application services.
-     *
-     * @return void
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-        
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+
         if ($this->app->runningInConsole()) {
             // Export configs
             $this->publishConfigs();
@@ -55,28 +51,19 @@ class LaravelAuthServiceProvider extends ServiceProvider
         $this->registerTranslations();
     }
 
-    /**
-     * @return void
-     */
     protected function registerRoutes(): void
     {
         Route::group($this->routeConfiguration(), function (): void {
-            $this->loadRoutesFrom(__DIR__ . '/../../routes/api.php');
+            $this->loadRoutesFrom(__DIR__.'/../../routes/api.php');
         });
-        //$this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        // $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
     }
 
-    /**
-     * @return void
-     */
     protected function registerTranslations(): void
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'laravel-auth');
+        $this->loadTranslationsFrom(__DIR__.'/../../resources/lang', 'laravel-auth');
     }
 
-    /**
-     * @return array
-     */
     protected function routeConfiguration(): array
     {
         return [
@@ -84,39 +71,27 @@ class LaravelAuthServiceProvider extends ServiceProvider
         ];
     }
 
-    /**
-     * @return void
-     */
     private function publishConfigs(): void
     {
         $this->publishes([
-            __DIR__ . '/../../config/wame-auth.php' => config_path('wame-auth.php'),
+            __DIR__.'/../../config/wame-auth.php' => config_path('wame-auth.php'),
         ], 'config');
     }
 
-    /**
-     * @return void
-     */
     private function publishViews(): void
     {
         $this->publishes([
-            __DIR__ . '/../../resources/views' => resource_path('views/vendor/wame-auth'),
+            __DIR__.'/../../resources/views' => resource_path('views/vendor/wame-auth'),
         ], 'views');
     }
 
-    /**
-     * @return void
-     */
     private function publishTranslations(): void
     {
         $this->publishes([
-            __DIR__ . '/../../resources/lang' => resource_path('lang/vendor/laravel-auth'),
+            __DIR__.'/../../resources/lang' => resource_path('lang/vendor/laravel-auth'),
         ], 'translations');
     }
 
-    /**
-     * @return void
-     */
     private function registerVerificationMail(): void
     {
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {

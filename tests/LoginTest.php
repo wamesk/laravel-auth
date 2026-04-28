@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
+
 use function Pest\Laravel\post;
 
 uses(DatabaseTransactions::class, TestCase::class);

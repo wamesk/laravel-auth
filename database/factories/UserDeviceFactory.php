@@ -3,10 +3,11 @@
 namespace Wame\LaravelAuth\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Wame\LaravelAuth\Models\Model;
 use Wame\LaravelAuth\Models\UserDevice;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Wame\LaravelAuth\Models\Model>
+ * @extends Factory<Model>
  */
 class UserDeviceFactory extends Factory
 {

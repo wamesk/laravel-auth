@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Notifications;
 
@@ -15,18 +15,13 @@ class UserRegisteredNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
-     * @return array
+     * @param  mixed  $notifiable
      */
     public function via($notifiable): array
     {
         return ['mail'];
     }
 
-    /**
-     * @param $notifiable
-     * @return UserRegisteredMail
-     */
     public function toMail($notifiable): UserRegisteredMail
     {
         return (new UserRegisteredMail($notifiable))->to($notifiable);
@@ -35,8 +30,7 @@ class UserRegisteredNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
-     * @return array
+     * @param  mixed  $notifiable
      */
     public function toArray($notifiable): array
     {
@@ -47,13 +41,9 @@ class UserRegisteredNotification extends Notification
 
     /**
      * Determine if the notification should be sent.
-     *
-     * @param $notifiable
-     * @param $channel
-     * @return bool
      */
     public function shouldSend($notifiable, $channel): bool
     {
-        return !$notifiable->hasVerifiedEmail();
+        return ! $notifiable->hasVerifiedEmail();
     }
 }

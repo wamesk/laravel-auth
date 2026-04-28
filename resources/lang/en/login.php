@@ -6,5 +6,5 @@ return [
     'user_not_verified' => 'User with such email is not verified.',
     'wrong_password' => 'Incorrect password.',
     'success' => 'Login successful.',
-    'unauthorized' => 'Login is not allowed.'
+    'unauthorized' => 'Login is not allowed.',
 ];

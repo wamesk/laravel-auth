@@ -4,16 +4,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
+
 use function Pest\Laravel\post;
 
 uses(DatabaseTransactions::class, TestCase::class);
 
 it('user register with correct data', function () {
     // Arrange
-    $password = fake()->password(8) . '1!As';
+    $password = fake()->password(8).'1!As';
 
     $userData = [
-        'email' => time() . fake()->freeEmail(),
+        'email' => time().fake()->freeEmail(),
         'password' => $password,
         'first_name' => fake()->firstName(),
         'last_name' => fake()->lastName(),
@@ -37,10 +38,10 @@ it('user register with correct data', function () {
 
 it('user register with incorrect password confirmation', function () {
     // Arrange
-    $password = fake()->password(8) . '1!As';
+    $password = fake()->password(8).'1!As';
 
     $userData = [
-        'email' => time() . fake()->freeEmail(),
+        'email' => time().fake()->freeEmail(),
         'password' => $password,
         'first_name' => fake()->firstName(),
         'last_name' => fake()->lastName(),
@@ -62,10 +63,10 @@ it('user register with incorrect password confirmation', function () {
 
 it('user register with existing email user', function () {
     // Arrange
-    $password = fake()->password(8) . '1!As';
+    $password = fake()->password(8).'1!As';
 
     $userData = [
-        'email' => time() . fake()->freeEmail(),
+        'email' => time().fake()->freeEmail(),
         'password' => $password,
         'first_name' => fake()->firstName(),
         'last_name' => fake()->lastName(),
@@ -127,5 +128,3 @@ function postRegisterRequest(array $userData, string $password): TestResponse
         'Accept' => 'application/json',
     ]);
 }
-
-

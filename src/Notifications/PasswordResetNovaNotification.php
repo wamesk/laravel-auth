@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Notifications;
 
@@ -14,8 +14,6 @@ class PasswordResetNovaNotification extends Notification
 
     /**
      * Create a new notification instance.
-     *
-     * @param string $token
      */
     public function __construct(
         protected string $token
@@ -24,18 +22,13 @@ class PasswordResetNovaNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
-     * @return array
+     * @param  mixed  $notifiable
      */
     public function via($notifiable): array
     {
         return ['mail'];
     }
 
-    /**
-     * @param $notifiable
-     * @return UserPasswordResetNovaMail
-     */
     public function toMail($notifiable): UserPasswordResetNovaMail
     {
         return (new UserPasswordResetNovaMail($notifiable, $this->token))->to($notifiable);
@@ -44,8 +37,7 @@ class PasswordResetNovaNotification extends Notification
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
-     * @return array
+     * @param  mixed  $notifiable
      */
     public function toArray($notifiable): array
     {

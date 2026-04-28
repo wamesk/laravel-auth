@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Resources\v1;
 
@@ -13,9 +13,6 @@ class SocialiteProviderResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     *
-     * @param Request $request
-     * @return array
      */
     public function toArray(Request $request): array
     {
@@ -32,7 +29,7 @@ class SocialiteProviderResource extends JsonResource
             'title' => $this->title,
             'name' => $this->name,
             'redirect' => $url,
-            'redirect_signature' => $request->withSignature ? $urlQuery['signature'] ?? null : null
+            'redirect_signature' => $request->withSignature ? $urlQuery['signature'] ?? null : null,
         ];
     }
 }

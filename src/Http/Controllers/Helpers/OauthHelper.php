@@ -3,14 +3,11 @@
 namespace Wame\LaravelAuth\Http\Controllers\Helpers;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Request;
 
 class OauthHelper
 {
-    /**
-     * @param string $bearerToken
-     * @return string
-     */
     public static function getOauthAccessTokenId(string $bearerToken): string
     {
         $tokenParts = explode('.', $bearerToken);
@@ -22,10 +19,7 @@ class OauthHelper
     }
 
     /**
-     * @param Request $request
-     * @return array
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public static function getClientResponse(Request $request): array
     {
@@ -33,7 +27,7 @@ class OauthHelper
             'http_errors' => false,
         ]);
 
-        $response = $client->post(env('APP_URL') . config('services.passport.login_endpoint'), [
+        $response = $client->post(env('APP_URL').config('services.passport.login_endpoint'), [
             'form_params' => [
                 'grant_type' => 'password',
                 'client_id' => config('services.passport.client_id'),

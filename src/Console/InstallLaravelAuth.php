@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Console;
 
@@ -25,16 +25,14 @@ class InstallLaravelAuth extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
     public function handle(): int
     {
-        Artisan::call('vendor:publish', ['--tag' => 'passport-config'], );
+        Artisan::call('vendor:publish', ['--tag' => 'passport-config']);
         Artisan::call('vendor:publish', ['--tag' => 'eloquent-sortable-config']);
-        Artisan::call('vendor:publish', ['--provider' => 'Wame\LaravelAuth\LaravelAuthServiceProvider', '--tag' => 'config', ]);
-        Artisan::call('vendor:publish', ['--provider' => 'Wame\LaravelAuth\LaravelAuthServiceProvider', '--tag' => 'migrations', ]);
-        Artisan::call('vendor:publish', ['--provider' => 'Spatie\Activitylog\ActivitylogServiceProvider', '--tag' => 'activitylog-migrations', ]);
+        Artisan::call('vendor:publish', ['--provider' => 'Wame\LaravelAuth\LaravelAuthServiceProvider', '--tag' => 'config']);
+        Artisan::call('vendor:publish', ['--provider' => 'Wame\LaravelAuth\LaravelAuthServiceProvider', '--tag' => 'migrations']);
+        Artisan::call('vendor:publish', ['--provider' => 'Spatie\Activitylog\ActivitylogServiceProvider', '--tag' => 'activitylog-migrations']);
 
         return Command::SUCCESS;
     }

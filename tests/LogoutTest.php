@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
+
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\delete;
@@ -25,7 +26,7 @@ it('user logout authorized', function () {
     // Act
     $response = delete(route('auth.logout'), [], [
         'Accept' => 'application/json',
-        'Authorization' => 'Bearer ' . $accessToken,
+        'Authorization' => 'Bearer '.$accessToken,
     ]);
 
     // Assert
