@@ -1,6 +1,6 @@
 {
     "name": "wamesk/laravel-auth",
-    "version": "5.1.0",
+    "version": "5.2.0",
     "description": "OAuth2 authorization with API endpoints. Also includes registration process, login, password reset, email validation.",
     "type": "library",
     "license": "MIT",
@@ -25,6 +25,7 @@
         }
     },
     "require": {
-        "hisorange/browser-detect": "^5.0"
+        "hisorange/browser-detect": "^5.0",
+        "laravel/socialite": "^5.0"
     }
 }

@@ -95,8 +95,6 @@ class LaravelAuthController extends Controller
         return $action->handle($request);
     }
 
-    public string $codePrefix = 'wame-auth::auth';
-
     /**
      * @throws Exception
      */

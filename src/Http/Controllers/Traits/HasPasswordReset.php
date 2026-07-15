@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Models\UserPasswordReset;
 use Wame\LaravelAuth\Notifications\PasswordResetCodeNotification;
 use Wame\LaravelAuth\Notifications\PasswordResetNovaNotification;
@@ -61,7 +60,12 @@ trait HasPasswordReset
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
+            return response()->json([
+                'data' => null,
+                'code' => '1.1.1',
+                'errors' => $validator->messages()->toArray(),
+                'message' => __('laravel-auth::auth.1.1.1'),
+            ], 400);
         }
 
         $modelClass = config('wame-auth.model');
@@ -82,13 +86,23 @@ trait HasPasswordReset
                 if ($userPasswordReset) {
                     $user->notify(new PasswordResetCodeNotification((string) $code));
 
-                    return ApiResponse::code('5.1.1', $this->codePrefix)->response();
+                    return response()->json([
+                        'data' => null,
+                        'code' => '5.1.1',
+                        'errors' => null,
+                        'message' => __('laravel-auth::auth.5.1.1'),
+                    ]);
                 }
             }
             if ($method === 2) {
                 if ($userPasswordReset) {
                     // TODO: Send Password Reset Email Link
-                    return ApiResponse::code('5.1.4', $this->codePrefix)->response();
+                    return response()->json([
+                        'data' => null,
+                        'code' => '5.1.4',
+                        'errors' => null,
+                        'message' => __('laravel-auth::auth.5.1.4'),
+                    ]);
                 }
             }
             if ($method === 3) {
@@ -101,14 +115,29 @@ trait HasPasswordReset
                     ]);
                     $user->notify(new PasswordResetNovaNotification($passwordToken));
 
-                    return ApiResponse::code('5.1.6', $this->codePrefix)->response();
+                    return response()->json([
+                        'data' => null,
+                        'code' => '5.1.6',
+                        'errors' => null,
+                        'message' => __('laravel-auth::auth.5.1.6'),
+                    ]);
                 }
             }
         } else {
-            return ApiResponse::code('5.1.8', $this->codePrefix)->response(400);
+            return response()->json([
+                'data' => null,
+                'code' => '5.1.8',
+                'errors' => null,
+                'message' => __('laravel-auth::auth.5.1.8'),
+            ], 400);
         }
 
-        return ApiResponse::code('5.1.7', $this->codePrefix)->response(400);
+        return response()->json([
+            'data' => null,
+            'code' => '5.1.7',
+            'errors' => null,
+            'message' => __('laravel-auth::auth.5.1.7'),
+        ], 400);
     }
 
     /**
@@ -144,7 +173,12 @@ trait HasPasswordReset
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
+            return response()->json([
+                'data' => null,
+                'code' => '1.1.1',
+                'errors' => $validator->messages()->toArray(),
+                'message' => __('laravel-auth::auth.1.1.1'),
+            ], 400);
         }
 
         $modelClass = config('wame-auth.model');
@@ -158,12 +192,22 @@ trait HasPasswordReset
         ])->first();
 
         if (! $userPasswordReset) {
-            return ApiResponse::code('5.1.3', $this->codePrefix)->response(403);
+            return response()->json([
+                'data' => null,
+                'code' => '5.1.3',
+                'errors' => null,
+                'message' => __('laravel-auth::auth.5.1.3'),
+            ], 403);
         }
 
         $user->update(['password' => Hash::make($request->new_password)]);
         $userPasswordReset->delete();
 
-        return ApiResponse::code('5.1.2', $this->codePrefix)->response();
+        return response()->json([
+            'data' => null,
+            'code' => '5.1.2',
+            'errors' => null,
+            'message' => __('laravel-auth::auth.5.1.2'),
+        ]);
     }
 }

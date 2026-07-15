@@ -11,12 +11,10 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Wame\ApiResponse\Helpers\ApiResponse;
+use Illuminate\Support\Facades\Validator;
 use Wame\LaravelAuth\Http\Controllers\Helpers\BrowserHelper;
 use Wame\LaravelAuth\Http\Controllers\Helpers\OauthHelper;
 use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
-use Wame\Validator\Rules\IsString;
-use Wame\Validator\Utils\Validator;
 
 trait HasSocial
 {
@@ -31,22 +29,32 @@ trait HasSocial
      *
      * @throws GuzzleException
      */
-    public function socialLogin(Request $request): JsonResponse|ApiResponse
+    public function socialLogin(Request $request): JsonResponse
     {
         try {
             // Checks if users can log in
             if (! config('wame-auth.social.enabled')) {
-                return ApiResponse::code('6.1.1', $this->codePrefix)->response(403);
+                return response()->json([
+                    'data' => null,
+                    'code' => '6.1.1',
+                    'errors' => null,
+                    'message' => __('laravel-auth::auth.6.1.1'),
+                ], 403);
             }
 
             // Validate request
-            $validator = Validator::code('6.1.2')->validate($request->all(), [
-                'token' => ['required', new IsString],
-                'fcm_token' => [new IsString],
-                'version' => [new IsString],
+            $validator = Validator::make($request->all(), [
+                'token' => ['required', 'string'],
+                'fcm_token' => ['string'],
+                'version' => ['string'],
             ]);
-            if ($validator) {
-                return $validator;
+            if ($validator->fails()) {
+                return response()->json([
+                    'data' => null,
+                    'code' => '6.1.2',
+                    'errors' => $validator->messages()->toArray(),
+                    'message' => __('laravel-auth::auth.6.1.2'),
+                ], 400);
             }
 
             // Decode token
@@ -102,9 +110,19 @@ trait HasSocial
                 'access_token' => $passport->accessToken,
             ];
 
-            return ApiResponse::data($data)->code('6.1.3', $this->codePrefix)->response();
+            return response()->json([
+                'data' => $data,
+                'code' => '6.1.3',
+                'errors' => null,
+                'message' => __('laravel-auth::auth.6.1.3'),
+            ]);
         } catch (Exception $e) {
-            return ApiResponse::code('')->message($e->getMessage())->response(500);
+            return response()->json([
+                'data' => null,
+                'code' => '',
+                'errors' => null,
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }

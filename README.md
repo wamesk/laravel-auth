@@ -4,6 +4,28 @@ Sanctum authorization with API endpoints.
 
 Also includes registration process, login, password reset, email validation.
 
+## ⚠️ Social login — not functional
+
+Social login (both the JWT `POST /login/{provider}` endpoint and the Socialite OAuth flow)
+is **not functional** in this build and is intentionally disabled:
+
+- Token issuance still relies on **Laravel Passport** (`/oauth/token`, `config('passport.*')`),
+  but this project runs on **Laravel Sanctum** and Passport is not installed.
+- The `BrowserHelper` class used by the JWT social login is missing from the package.
+
+Current behaviour of the related endpoints:
+
+- `GET /socialite-providers` returns **HTTP 501 (Not Implemented)**.
+- `GET /socialite-account/{provider}` aborts with **HTTP 501 (Not Implemented)**.
+- `POST /login/{provider}` is registered only when `social.enabled` is `true` in
+  `config/wame-auth.php` (default: `false`).
+
+To restore social login: migrate token issuance to Sanctum (as in `RegisterDeviceAction` /
+`LaravelAuthController::login`), restore `BrowserHelper`, then remove the 501 guards in
+`SocialiteProviderController` and `SocialiteAccountController`. The Passport-based
+"Setup OAuth2" instructions below are legacy and are not required for the non-social
+auth features, which use Sanctum.
+
 # Setup
 
 ```bash

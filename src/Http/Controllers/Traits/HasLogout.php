@@ -6,7 +6,6 @@ namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Wame\ApiResponse\Helpers\ApiResponse;
 
 trait HasLogout
 {
@@ -27,7 +26,7 @@ trait HasLogout
      * "message": "Unauthenticated."
      * }
      */
-    public function logout(Request $request): JsonResponse|ApiResponse
+    public function logout(Request $request): JsonResponse
     {
         $userTokens = $request->user()->tokens;
 
@@ -35,6 +34,11 @@ trait HasLogout
             $token->revoke();
         }
 
-        return ApiResponse::code('2.1.6', $this->codePrefix)->response(200);
+        return response()->json([
+            'data' => null,
+            'code' => '2.1.6',
+            'errors' => null,
+            'message' => __('laravel-auth::auth.2.1.6'),
+        ]);
     }
 }

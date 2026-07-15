@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
-use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Events\SocialiteAccountAuthEvent;
 use Wame\LaravelAuth\Http\Controllers\Traits\SocialiteProviders;
 use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
@@ -26,10 +25,17 @@ class SocialiteAccountController extends Controller
 {
     use SocialiteProviders;
 
-    protected string $codePrefix = 'wame-auth::socialite-account';
-
+    /**
+     * Redirect to Social Login Provider
+     *
+     * Not functional in this build — social login is disabled (aborts with HTTP 501).
+     * See the package README.
+     */
     public function redirect(Request $request, string $providerId): mixed
     {
+        // Social login disabled — early escape before the Socialite/Passport flow. See README.
+        abort(501, __('laravel-auth::auth.6.1.1'));
+
         $socialiteProvider = SocialiteProvider::find($providerId);
 
         if ($request->get('signature') && $request->hasValidSignature()) {
@@ -49,12 +55,21 @@ class SocialiteAccountController extends Controller
     }
 
     /**
+     * Social Login Callback
+     *
+     * Not functional in this build — social login is disabled (aborts with HTTP 501). Token
+     * issuance here still uses Laravel Passport, which is not installed (project uses
+     * Sanctum). See the package README.
+     *
      * @param  string|null  $signature
      *
      * @throws GuzzleException
      */
     public function callback(Request $request, string $provider): Application|View|Factory|\Illuminate\Contracts\Foundation\Application
     {
+        // Social login disabled — early escape before the Passport-based token issuance. See README.
+        abort(501, __('laravel-auth::auth.6.1.1'));
+
         $socialiteProvider = SocialiteProvider::find($provider);
 
         $signature = Cookie::get('auth-signature');
@@ -84,7 +99,7 @@ class SocialiteAccountController extends Controller
             $userSocialAccount = $user->socialAccounts()->where('socialite_provider_id', '=', $socialiteProvider->id)->first();
 
             if (! $userSocialAccount) {
-                abort(403, __('wame-auth::socialite-account.1.1.1'));
+                abort(403, __('laravel-auth::socialite-account.1.1.1'));
             }
 
         } else {
@@ -116,7 +131,12 @@ class SocialiteAccountController extends Controller
 
         if ($signature) {
             event(new SocialiteAccountAuthEvent(
-                ApiResponse::data($data)->code('2.1.3', $laravelAuthController->codePrefix)->response(),
+                response()->json([
+                    'data' => $data,
+                    'code' => '2.1.3',
+                    'errors' => null,
+                    'message' => __('laravel-auth::auth.2.1.3'),
+                ]),
                 $signature)
             );
         }

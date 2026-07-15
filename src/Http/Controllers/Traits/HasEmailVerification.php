@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use Wame\ApiResponse\Helpers\ApiResponse;
 use Wame\LaravelAuth\Notifications\UserEmailVerificationByLinkNotification;
 
 trait HasEmailVerification
@@ -45,7 +44,12 @@ trait HasEmailVerification
         ]);
 
         if ($validator->fails()) {
-            return ApiResponse::errors($validator->messages()->toArray())->code('1.1.1', $this->codePrefix)->response(400);
+            return response()->json([
+                'data' => null,
+                'code' => '1.1.1',
+                'errors' => $validator->messages()->toArray(),
+                'message' => __('laravel-auth::auth.1.1.1'),
+            ], 400);
         }
 
         $modelClass = config('wame-auth.model');
@@ -53,7 +57,12 @@ trait HasEmailVerification
 
         if ($user) {
             if ($user->hasVerifiedEmail()) {
-                return ApiResponse::errors($validator->messages()->toArray())->code('4.1.3', $this->codePrefix)->response(403);
+                return response()->json([
+                    'data' => null,
+                    'code' => '4.1.3',
+                    'errors' => $validator->messages()->toArray(),
+                    'message' => __('laravel-auth::auth.4.1.3'),
+                ], 403);
             }
 
             $verificationLink = URL::temporarySignedRoute(
@@ -70,7 +79,12 @@ trait HasEmailVerification
             $user->notify(new UserEmailVerificationByLinkNotification($verificationLink));
         }
 
-        return ApiResponse::code('4.1.2', $this->codePrefix)->response();
+        return response()->json([
+            'data' => null,
+            'code' => '4.1.2',
+            'errors' => null,
+            'message' => __('laravel-auth::auth.4.1.2'),
+        ]);
     }
 
     public function verifyEmail(Request $request): View|Factory|Application
