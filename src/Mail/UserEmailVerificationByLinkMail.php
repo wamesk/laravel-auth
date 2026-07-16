@@ -37,7 +37,7 @@ class UserEmailVerificationByLinkMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'wame-auth::emails.users.verificationLink',
+            markdown: 'wame-auth::emails.users.verification_link',
             with: ['verificationLink' => $this->verificationLink]
         );
     }
