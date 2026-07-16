@@ -66,7 +66,7 @@ trait HasEmailVerification
             }
 
             $verificationLink = URL::temporarySignedRoute(
-                'auth.verify',
+                'verification.verify',
                 Carbon::now()->addMinutes(
                     config('wame-auth.email_verification.verification_link_expires_after', 120)
                 ),
