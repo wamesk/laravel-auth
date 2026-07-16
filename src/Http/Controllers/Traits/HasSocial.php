@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Wame\LaravelAuth\Http\Controllers\Traits;
 
-use App\Models\Device;
-use Carbon\Carbon;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Wame\LaravelAuth\Http\Controllers\Helpers\BrowserHelper;
-use Wame\LaravelAuth\Http\Controllers\Helpers\OauthHelper;
+use Illuminate\Support\Str;
+use Throwable;
+use Wame\LaravelAuth\Http\Actions\RegisterDeviceAction;
+use Wame\LaravelAuth\Http\Controllers\Helpers\FirebaseTokenVerifier;
 use Wame\LaravelAuth\Http\Resources\v1\BaseUserResource;
 
 trait HasSocial
@@ -21,13 +20,13 @@ trait HasSocial
     /**
      * User Social Login
      *
-     * Login user token provided by social providers.
+     * Log a user in with a Firebase ID token issued by a social provider.
+     * The token signature is verified against Google's public keys before a
+     * local user + device are created and a Sanctum access token is returned.
      *
-     * @bodyParam token string required Social login token Example: eyJhbGciOiJSUzI1NiIsImtpZCI6Ijk3OWVkMTU1OTdhYjM1Zjc4Mj...
-     * @bodyParam fcm_token string Firebase Cloud Messaging Token for push notifications Example: f2oKFlM_Ty-rINTKCI6NnD:APA91bFrEtBye...
+     * @bodyParam token string required Firebase ID token from the social provider Example: eyJhbGciOiJSUzI1NiIsImtpZCI6Ijk3OWVkMTU1OTdhYjM1Zjc4Mj...
+     * @bodyParam fcm_token string Firebase Cloud Messaging token for push notifications Example: f2oKFlM_Ty-rINTKCI6NnD:APA91bFrEtBye...
      * @bodyParam version string Mobile app version
-     *
-     * @throws GuzzleException
      */
     public function socialLogin(Request $request): JsonResponse
     {
@@ -57,57 +56,57 @@ trait HasSocial
                 ], 400);
             }
 
-            // Decode token
-            $jwt = OauthHelper::getJwtPayload($request->get('token'));
+            // Verify the Firebase ID token (signature + issuer/audience/expiry)
+            try {
+                $jwt = FirebaseTokenVerifier::verify($request->get('token'));
+            } catch (Throwable $e) {
+                return response()->json([
+                    'data' => null,
+                    'code' => '6.1.2',
+                    'errors' => null,
+                    'message' => __('laravel-auth::auth.6.1.2'),
+                ], 401);
+            }
+
+            // Split the provider's display name into first/last (both columns are required)
+            $fullName = trim((string) ($jwt->name ?? ''));
+            $firstName = (string) ($jwt->given_name ?? (str_contains($fullName, ' ') ? Str::before($fullName, ' ') : $fullName));
+            $lastName = (string) ($jwt->family_name ?? (str_contains($fullName, ' ') ? Str::after($fullName, ' ') : ''));
 
             DB::beginTransaction();
 
-            // Create User or Update existing
+            // Create the user on first login, or fetch the existing one by e-mail
             $modelClass = config('wame-auth.model');
-            $user = $modelClass::updateOrCreate(
+            $user = $modelClass::firstOrCreate(
+                ['email' => $jwt->email],
                 [
-                    'email' => $jwt->email,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'password' => Str::random(40),
                 ],
-                [
-                    'email' => $jwt->email,
-                    'name' => $jwt->name,
-                ]
             );
 
-            if (class_exists('App\Models\Device')) {
-
-                // Get Browser info
-                $browserInfo = BrowserHelper::getBrowserInfo();
-                $deviceName = BrowserHelper::getDeviceName($browserInfo);
-
-                // Create or update device
-                $device = Device::updateOrCreate(
-                    [
-                        'user_id' => $user->id,
-                        'name' => $deviceName,
-                    ],
-                    [
-                        'user_id' => $user->id,
-                        'name' => $deviceName,
-                        'description' => $browserInfo,
-                        'fcm_token' => $request->get('fcm_token'),
-                        'version' => $request->get('version'),
-                        'last_login_at' => now(),
-                    ]
-                );
+            // Firebase already verified the e-mail — mirror that locally
+            if (($jwt->email_verified ?? false) && ! $user->hasVerifiedEmail()) {
+                $user->forceFill(['email_verified_at' => now()])->save();
             }
 
             DB::commit();
 
-            // Create User access token0
-            $passport = $user->createToken($device->id ?? null);
-            $expiresIn = Carbon::now()->startOfDay()->diffInSeconds($passport->token->expires_at->startOfDay());
+            // Register the device and issue a Sanctum token (same path as login/register)
+            $accessToken = resolve(RegisterDeviceAction::class)->handle(
+                user: $user,
+                deviceToken: (string) $request->get('fcm_token', ''),
+                version: $request->get('version'),
+            );
+
+            $expiration = config('sanctum.expiration');
 
             $data['user'] = new BaseUserResource($user);
             $data['auth'] = [
                 'token_type' => 'Bearer',
-                'expires_in' => $expiresIn,
-                'access_token' => $passport->accessToken,
+                'expires_in' => $expiration ? $expiration * 60 : null,
+                'access_token' => $accessToken,
             ];
 
             return response()->json([

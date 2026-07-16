@@ -12,6 +12,7 @@ class RegisterDeviceAction
     public function handle(
         Model $user,
         string $deviceToken,
+        ?string $version = null,
     ): string {
         $browserInfo = $this->getBrowserInfo();
 
@@ -20,7 +21,7 @@ class RegisterDeviceAction
 
         $deviceName = $this->getDeviceName($browserInfo);
 
-        $device = $this->createDevice($deviceClass, $deviceToken, $user, $deviceName, $browserInfo);
+        $device = $this->createDevice($deviceClass, $deviceToken, $user, $deviceName, $browserInfo, $version);
 
         return $device->createToken($deviceName)->plainTextToken;
     }
@@ -88,13 +89,14 @@ class RegisterDeviceAction
         ];
     }
 
-    private function createDevice(Model $deviceClass, string $deviceToken, Model $user, mixed $deviceName, array $browserInfo): Builder|Model
+    private function createDevice(Model $deviceClass, string $deviceToken, Model $user, mixed $deviceName, array $browserInfo, ?string $version = null): Builder|Model
     {
         return $deviceClass::query()->create([
             'user_id' => $user->id,
             'name' => $deviceName,
             'data' => $browserInfo,
             'device_token' => $deviceToken,
+            'version' => $version,
             'last_login' => Carbon::now(),
         ]);
     }

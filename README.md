@@ -4,27 +4,44 @@ Sanctum authorization with API endpoints.
 
 Also includes registration process, login, password reset, email validation.
 
-## ⚠️ Social login — not functional
+## Social login
 
-Social login (both the JWT `POST /login/{provider}` endpoint and the Socialite OAuth flow)
-is **not functional** in this build and is intentionally disabled:
+### JWT social login — `POST /login/{provider}`
 
-- Token issuance still relies on **Laravel Passport** (`/oauth/token`, `config('passport.*')`),
-  but this project runs on **Laravel Sanctum** and Passport is not installed.
-- The `BrowserHelper` class used by the JWT social login is missing from the package.
+Mobile clients log in by sending a **Firebase ID token**. The signature is verified
+against Google's public keys (`firebase/php-jwt`), the user + device are created (or
+reused), and a **Sanctum** access token is returned in the `6.1.3` envelope.
 
-Current behaviour of the related endpoints:
+Enable and configure it in `config/wame-auth.php`:
 
-- `GET /socialite-providers` returns **HTTP 501 (Not Implemented)**.
-- `GET /socialite-account/{provider}` aborts with **HTTP 501 (Not Implemented)**.
-- `POST /login/{provider}` is registered only when `social.enabled` is `true` in
-  `config/wame-auth.php` (default: `false`).
+```php
+'social' => [
+    'enabled' => true,
+    'firebase_project_id' => env('FIREBASE_PROJECT_ID'),
+],
+```
 
-To restore social login: migrate token issuance to Sanctum (as in `RegisterDeviceAction` /
-`LaravelAuthController::login`), restore `BrowserHelper`, then remove the 501 guards in
-`SocialiteProviderController` and `SocialiteAccountController`. The Passport-based
-"Setup OAuth2" instructions below are legacy and are not required for the non-social
-auth features, which use Sanctum.
+Set `FIREBASE_PROJECT_ID` in `.env` to your Firebase project ID. The endpoint is only
+registered when `social.enabled` is `true` (default: `false`). Verification enforces the
+RS256 signature against Google's Firebase keys, `iss = https://securetoken.google.com/<project-id>`,
+`aud = <project-id>`, a non-empty `sub` and expiry (with a small clock-skew leeway). A user
+is created on first login with a random password and the provider's name; a verified
+Firebase e-mail is mirrored to `email_verified_at`.
+
+### Socialite OAuth flow — not functional
+
+The browser Socialite OAuth flow is **still disabled** and returns **HTTP 501**:
+
+- `GET /socialite-providers` (index)
+- `GET /socialite-account/{provider}` (callback)
+- `GET /socialite/redirect/{provider}` (redirect)
+
+It relies on `LaravelAuthController::authUserWithOAuth2()`, which issues tokens via
+**Laravel Passport** (`/oauth/token`, `config('passport.*')`) — not installed here (the
+project uses Sanctum). To restore it, migrate that token issuance to Sanctum and remove
+the 501 guards in `SocialiteProviderController` / `SocialiteAccountController`. The
+Passport-based "Setup OAuth2" instructions below are legacy and are not required for the
+Sanctum-based auth features.
 
 # Setup
 

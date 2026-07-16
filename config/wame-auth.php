@@ -92,6 +92,9 @@ return [
 
         // Determine if social login should be enabled.
         'enabled' => true,
+
+        // Firebase project ID used to verify the ID token (audience + issuer).
+        'firebase_project_id' => env('FIREBASE_PROJECT_ID'),
     ],
 
     // Routing Options
