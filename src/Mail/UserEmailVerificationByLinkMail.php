@@ -27,7 +27,7 @@ class UserEmailVerificationByLinkMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __(key: 'emails.verificationLink.subject')
+            subject: __('laravel-auth::emails.verificationLink.subject')
         );
     }
 
